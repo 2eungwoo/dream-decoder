@@ -1,0 +1,39 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: optional:env[.env]
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/dream_decoder?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#  sql:
+#    init:
+#      mode: always
+
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: trace
+    com.example: debug
+
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+  api-url: ${OPENAI_API_URL}
+  model: ${OPENAI_MODEL}
