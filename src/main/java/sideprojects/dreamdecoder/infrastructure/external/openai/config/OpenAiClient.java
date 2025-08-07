@@ -62,9 +62,9 @@ public class OpenAiClient {
 
     private String parseChatResponse(ResponseEntity<OpenAiChatResponse> response) {
         OpenAiChatResponse chatResponse = response.getBody();
-        if (chatResponse == null || chatResponse.getChoices() == null || chatResponse.getChoices().isEmpty()) {
+        if (chatResponse == null || chatResponse.choices() == null || chatResponse.choices().isEmpty()) {
             throw new OpenAiApiException(OpenAiErrorCode.OPENAI_NO_CHOICES);
         }
-        return chatResponse.getChoices().get(0).getMessage().getContent();
+        return chatResponse.choices().get(0).message().content();
     }
 }

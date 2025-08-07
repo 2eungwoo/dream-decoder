@@ -2,6 +2,7 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.infrastructure.external.openai.config.OpenAiClient;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.AiChatResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.PromptGenerator;
 
@@ -16,9 +17,10 @@ public class OpenAiChatService {
         this.openAiClient = openAiClient;
     }
 
-    public String chat(Long userId, String prompt) {
+    public AiChatResponse chat(Long userId, String prompt) {
         AiStyle style = aiStyleService.getChosenStyle(userId);
         String systemPrompt = PromptGenerator.generateSystemPrompt(style);
-        return openAiClient.chat(systemPrompt, prompt);
+        String aiResponseContent = openAiClient.chat(systemPrompt, prompt);
+        return AiChatResponse.of(aiResponseContent, style);
     }
 }

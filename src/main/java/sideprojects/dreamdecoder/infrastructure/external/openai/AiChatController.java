@@ -6,7 +6,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.SetAiStyleRequest;
+import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.response.OpenAiResponseCode;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.AiChatResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.ChooseAiStyleRequest;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.ChooseAiStyleResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.AiStyleService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.OpenAiChatService;
 
@@ -18,14 +22,15 @@ public class AiChatController {
     private final AiStyleService aiStyleService;
 
     @PostMapping("/ai/chat")
-    public ResponseEntity<String> chat(@RequestParam Long userId, @RequestBody String prompt) {
-        String result = openAiChatService.chat(userId, prompt);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ApiResponse<AiChatResponse>> chat(@RequestParam Long userId, @RequestBody String prompt) {
+        AiChatResponse result = openAiChatService.chat(userId, prompt);
+        return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, result);
     }
 
     @PostMapping("/ai/style")
-    public ResponseEntity<Void> setAiStyle(@RequestParam Long userId, @RequestBody SetAiStyleRequest request) {
+    public ResponseEntity<ApiResponse<ChooseAiStyleResponse>> setAiStyle(@RequestParam Long userId, @RequestBody ChooseAiStyleRequest request) {
         aiStyleService.chooseStyle(userId, request.getStyle());
-        return ResponseEntity.ok().build();
+        ChooseAiStyleResponse response = ChooseAiStyleResponse.of(request.getStyle());
+        return ApiResponse.success(OpenAiResponseCode.AI_STYLE_SET_SUCCESS, response);
     }
 }

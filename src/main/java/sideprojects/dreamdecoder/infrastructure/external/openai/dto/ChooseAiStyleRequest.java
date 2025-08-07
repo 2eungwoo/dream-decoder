@@ -6,6 +6,6 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 @Getter
 @Setter
-public class SetAiStyleRequest {
+public class ChooseAiStyleRequest {
     private AiStyle style;
 }
