@@ -25,7 +25,7 @@ public class AiChatController {
 
     @PostMapping("/ai/style")
     public ResponseEntity<Void> setAiStyle(@RequestParam Long userId, @RequestBody SetAiStyleRequest request) {
-        aiStyleService.setStyle(userId, request.getStyle());
+        aiStyleService.chooseStyle(userId, request.getStyle());
         return ResponseEntity.ok().build();
     }
 }

@@ -17,7 +17,7 @@ public class OpenAiChatService {
     }
 
     public String chat(Long userId, String prompt) {
-        AiStyle style = aiStyleService.getStyle(userId);
+        AiStyle style = aiStyleService.getChosenStyle(userId);
         String systemPrompt = PromptGenerator.generateSystemPrompt(style);
         return openAiClient.chat(systemPrompt, prompt);
     }

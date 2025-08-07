@@ -17,12 +17,12 @@ public class AiStyleService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void setStyle(Long userId, AiStyle style) {
+    public void chooseStyle(Long userId, AiStyle style) {
         String key = STYLE_PREFIX + userId;
         redisTemplate.opsForValue().set(key, style.name(), STYLE_TTL);
     }
 
-    public AiStyle getStyle(Long userId) {
+    public AiStyle getChosenStyle(Long userId) {
         String key = STYLE_PREFIX + userId;
         String styleName = redisTemplate.opsForValue().get(key);
         return styleName != null ? AiStyle.valueOf(styleName) : AiStyle.DEFAULT;
