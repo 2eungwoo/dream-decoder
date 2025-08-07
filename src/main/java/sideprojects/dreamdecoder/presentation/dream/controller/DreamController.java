@@ -1,13 +1,20 @@
 package sideprojects.dreamdecoder.presentation.dream.controller;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sideprojects.dreamdecoder.application.dream.usecase.delete.DeleteDreamUseCase;
+import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCase;
+import sideprojects.dreamdecoder.application.dream.usecase.find.FindOneDreamUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
+import sideprojects.dreamdecoder.application.dream.usecase.update.UpdateDreamUseCase;
 import sideprojects.dreamdecoder.domain.dream.model.Dream;
 import sideprojects.dreamdecoder.domain.dream.util.response.DreamResponseCode;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
@@ -20,12 +27,35 @@ import sideprojects.dreamdecoder.presentation.dream.dto.response.SaveDreamRespon
 public class DreamController {
 
     private final SaveDreamUseCase saveDreamUseCase;
+    private final FindAllDreamsUseCase findAllDreamsUseCase;
+    private final FindOneDreamUseCase findOneDreamUseCase;
+    private final UpdateDreamUseCase updateDreamUseCase;
+    private final DeleteDreamUseCase deleteDreamUseCase;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<SaveDreamResponse>> saveDream(@RequestBody @Valid SaveDreamRequest request) {
-        Dream savedDream = saveDreamUseCase.save(request);
-        SaveDreamResponse response = SaveDreamResponse.of(savedDream);
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<SaveDreamResponse>> saveDream(@RequestBody @Valid SaveDreamRequest request) {
+//        Dream savedDream = saveDreamUseCase.save(request);
+//        SaveDreamResponse response = SaveDreamResponse.of(savedDream);
+//
+//        return ApiResponse.success(DreamResponseCode.DREAM_SAVE_SUCCESS, response);
+//    }
 
-        return ApiResponse.success(DreamResponseCode.DREAM_SAVE_SUCCESS, response);
-    }
+//    @GetMapping()
+//    public ResponseEntity<ApiResponse<FindAllDreamResponse>> findOneDream(@PathVariable Long dreamId) {
+//        List<Dream> dreams = findAllDreamsUseCase.findAll();
+//        FindAllDreamResponse response = FindAllDreamResponse.of(dreams)
+//            .stream().map(FindAllDreamResponse.DreamDto::of).toList();
+//
+//        return ApiResponse.success(DreamResponseCode.DREAM_FOUND_ALL_SUCCESS, response);
+//    }
+//
+//    @GetMapping("/{dreamId}")
+//    public ResponseEntity<ApiResponse<FindOneDreamResponse>> findOneDream(@PathVariable Long dreamId) {
+//        Dream dream = findOneDreamUseCase.findById(dreamId);
+//        FindOneDreamResponse response = FindOneDreamResponse.of(dream);
+//
+//        return ApiResponse.success(DreamResponseCode.DREAM_FOUND_SUCCESS, response);
+//    }
+
+
 }
