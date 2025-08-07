@@ -1,9 +1,10 @@
-package sideprojects.dreamdecoder.application.dream.usecase
+package sideprojects.dreamdecoder.application.dream.usecase.find
 
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
 import sideprojects.dreamdecoder.domain.dream.model.Dream
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
+import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCaseImpl
 
 import java.time.LocalDateTime
 

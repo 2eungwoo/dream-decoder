@@ -1,8 +1,9 @@
-package sideprojects.dreamdecoder.application.dream.usecase
+package sideprojects.dreamdecoder.application.dream.usecase.delete
 
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException
+import sideprojects.dreamdecoder.application.dream.usecase.delete.DeleteDreamUseCaseImpl
 
 class DeleteDreamUseCaseSpec extends Specification {
 

@@ -5,7 +5,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.LocalDateTime;
 
-public record DreamResponse(
+public record SaveDreamResponse(
     Long id,
     Long userId,
     String dreamContent,
@@ -13,8 +13,8 @@ public record DreamResponse(
     AiStyle aiStyle,
     LocalDateTime interpretedAt
 ) {
-    public static DreamResponse of(Dream dream) {
-        return new DreamResponse(
+    public static SaveDreamResponse of(Dream dream) {
+        return new SaveDreamResponse(
             dream.getId(),
             dream.getUserId(),
             dream.getDreamContent(),

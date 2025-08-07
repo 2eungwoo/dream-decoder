@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.application.dream.usecase
+package sideprojects.dreamdecoder.application.dream.usecase.save
 
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
@@ -6,6 +6,8 @@ import sideprojects.dreamdecoder.domain.dream.model.Dream
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
 
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
+
+import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCaseImpl
 
 class SaveDreamUseCaseImplSpec extends Specification {
 

@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.application.dream.usecase;
+package sideprojects.dreamdecoder.application.dream.usecase.update;
 
 import sideprojects.dreamdecoder.domain.dream.model.Dream;
 

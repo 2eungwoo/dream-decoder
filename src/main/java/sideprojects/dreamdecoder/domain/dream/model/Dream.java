@@ -34,8 +34,4 @@ public class Dream {
                 .interpretedAt(LocalDateTime.now())
                 .build();
     }
-
-    public boolean isRecentInterpretation() {
-        return this.interpretedAt.isAfter(LocalDateTime.now().minusHours(24));
-    }
 }

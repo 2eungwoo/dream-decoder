@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.application.dream.usecase;
+package sideprojects.dreamdecoder.application.dream.usecase.find;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -7,12 +7,12 @@ import sideprojects.dreamdecoder.domain.dream.model.Dream;
 
 @Service
 @RequiredArgsConstructor
-public class SaveDreamUseCaseImpl implements SaveDreamUseCase {
+public class FindOneDreamUseCaseImpl implements FindOneDreamUseCase {
 
     private final DreamService dreamService;
 
     @Override
-    public Dream save(Dream dream) {
-        return dreamService.saveDream(dream);
+    public Dream findById(Long id) {
+        return dreamService.findDreamById(id);
     }
 }
