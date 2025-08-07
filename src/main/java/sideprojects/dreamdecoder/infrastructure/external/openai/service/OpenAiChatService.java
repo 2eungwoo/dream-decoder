@@ -2,7 +2,7 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.infrastructure.external.openai.config.OpenAiClient;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.AiChatResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.AiChatResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.PromptGenerator;
 

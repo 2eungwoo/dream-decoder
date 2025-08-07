@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.infrastructure.external.openai.dto;
+package sideprojects.dreamdecoder.infrastructure.external.openai.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

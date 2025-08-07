@@ -5,7 +5,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpStatusCodeException;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.OpenAiChatResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiChatResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 

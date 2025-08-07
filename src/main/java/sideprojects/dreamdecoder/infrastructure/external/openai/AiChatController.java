@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.response.OpenAiResponseCode;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.AiChatResponse;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.ChooseAiStyleRequest;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.ChooseAiStyleResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.AiChatResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.request.ChooseAiStyleRequest;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.ChooseAiStyleResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.AiStyleService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.OpenAiChatService;
 

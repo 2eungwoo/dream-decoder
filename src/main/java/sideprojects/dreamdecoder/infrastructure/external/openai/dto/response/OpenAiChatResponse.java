@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.infrastructure.external.openai.dto;
+package sideprojects.dreamdecoder.infrastructure.external.openai.dto.response;
 
 import java.util.List;
 

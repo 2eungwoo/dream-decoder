@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.infrastructure.external.openai.util.response;
+package sideprojects.dreamdecoder.infrastructure.external.openai.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
