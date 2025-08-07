@@ -5,6 +5,10 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpStatusCodeException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.OpenAiChatResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +17,7 @@ import java.util.Map;
 public class OpenAiClient {
 
     private final OpenAiProperties properties;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public String chat(String systemPrompt, String userPrompt) {
         // 요청 바디 구성
@@ -33,26 +37,25 @@ public class OpenAiClient {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
         try {
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<OpenAiChatResponse> response = restTemplate.exchange(
                 properties.getApiUrl(),
                 HttpMethod.POST,
                 request,
-                Map.class
+                OpenAiChatResponse.class
             );
 
             // 응답 파싱
-            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
-            if (choices == null || choices.isEmpty()) {
-                throw new RuntimeException("No choices returned from OpenAI");
+            OpenAiChatResponse chatResponse = response.getBody();
+            if (chatResponse == null || chatResponse.getChoices() == null || chatResponse.getChoices().isEmpty()) {
+                throw new OpenAiApiException(OpenAiErrorCode.OPENAI_NO_CHOICES);
             }
 
-            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-            return (String) message.get("content");
+            return chatResponse.getChoices().get(0).getMessage().getContent();
 
         } catch (HttpStatusCodeException ex) {
-            throw new RuntimeException("OpenAI API request failed: " + ex.getResponseBodyAsString(), ex);
+            throw new OpenAiApiException(OpenAiErrorCode.OPENAI_API_ERROR, ex);
         } catch (Exception ex) {
-            throw new RuntimeException("Unexpected error during OpenAI API call", ex);
+            throw new OpenAiApiException(OpenAiErrorCode.OPENAI_UNEXPECTED_ERROR, ex);
         }
     }
 }
