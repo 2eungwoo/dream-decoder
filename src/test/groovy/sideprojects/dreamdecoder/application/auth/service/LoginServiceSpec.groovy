@@ -23,11 +23,13 @@ class LoginServiceSpec extends Specification {
         given: "유효한 로그인 요청"
         def request = new LoginRequest("testuser", "password123")
         def user = User.builder().username("testuser").email("test@test.com").password("encryptedPassword").build()
-        def userModel = UserModel.from(user)
         def token = "jwt.token.here"
 
+        // Mock LoginValidator to return the user
         loginValidator.validateAndGetUser(request) >> user
-        tokenGenerateUseCase.generateToken(userModel.getUsername()) >> token
+
+        // Mock TokenGenerateUseCase to return the token, expecting the username from the user object
+        tokenGenerateUseCase.generateToken(user.getUsername()) >> token
 
         when: "로그인 서비스를 호출하면"
         AuthResponse response = loginService.execute(request)
@@ -37,6 +39,7 @@ class LoginServiceSpec extends Specification {
         response.username() == user.getUsername()
         response.email() == user.getEmail()
 
+        // Verify interactions
         1 * loginValidator.validateAndGetUser(request)
         1 * tokenGenerateUseCase.generateToken(user.getUsername())
     }
