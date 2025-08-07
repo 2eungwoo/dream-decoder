@@ -20,42 +20,51 @@ public class OpenAiClient {
     private final RestTemplate restTemplate;
 
     public String chat(String systemPrompt, String userPrompt) {
-        // 요청 바디 구성
-        Map<String, Object> body = Map.of(
-            "model", properties.getModel(),
-            "messages", List.of(
-                Map.of("role", "system", "content", systemPrompt),
-                Map.of("role", "user", "content", userPrompt)
-            )
-        );
-
-        // 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(properties.getApiKey());
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
         try {
-            ResponseEntity<OpenAiChatResponse> response = restTemplate.exchange(
-                properties.getApiUrl(),
-                HttpMethod.POST,
-                request,
-                OpenAiChatResponse.class
-            );
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(buildRequestBody(systemPrompt, userPrompt), buildHttpHeaders());
 
-            // 응답 파싱
-            OpenAiChatResponse chatResponse = response.getBody();
-            if (chatResponse == null || chatResponse.getChoices() == null || chatResponse.getChoices().isEmpty()) {
-                throw new OpenAiApiException(OpenAiErrorCode.OPENAI_NO_CHOICES);
-            }
+            ResponseEntity<OpenAiChatResponse> response = executeChatRequest(request);
 
-            return chatResponse.getChoices().get(0).getMessage().getContent();
+            return parseChatResponse(response);
 
         } catch (HttpStatusCodeException ex) {
             throw new OpenAiApiException(OpenAiErrorCode.OPENAI_API_ERROR, ex);
         } catch (Exception ex) {
             throw new OpenAiApiException(OpenAiErrorCode.OPENAI_UNEXPECTED_ERROR, ex);
         }
+    }
+
+    private Map<String, Object> buildRequestBody(String systemPrompt, String userPrompt) {
+        return Map.of(
+            "model", properties.getModel(),
+            "messages", List.of(
+                Map.of("role", "system", "content", systemPrompt),
+                Map.of("role", "user", "content", userPrompt)
+            )
+        );
+    }
+
+    private HttpHeaders buildHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(properties.getApiKey());
+        return headers;
+    }
+
+    private ResponseEntity<OpenAiChatResponse> executeChatRequest(HttpEntity<Map<String, Object>> request) {
+        return restTemplate.exchange(
+            properties.getApiUrl(),
+            HttpMethod.POST,
+            request,
+            OpenAiChatResponse.class
+        );
+    }
+
+    private String parseChatResponse(ResponseEntity<OpenAiChatResponse> response) {
+        OpenAiChatResponse chatResponse = response.getBody();
+        if (chatResponse == null || chatResponse.getChoices() == null || chatResponse.getChoices().isEmpty()) {
+            throw new OpenAiApiException(OpenAiErrorCode.OPENAI_NO_CHOICES);
+        }
+        return chatResponse.getChoices().get(0).getMessage().getContent();
     }
 }
