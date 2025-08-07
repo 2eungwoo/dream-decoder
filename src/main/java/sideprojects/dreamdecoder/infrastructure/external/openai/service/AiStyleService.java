@@ -2,6 +2,7 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.Duration;
 
@@ -16,14 +17,14 @@ public class AiStyleService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void setStyle(Long userId, String style) {
+    public void setStyle(Long userId, AiStyle style) {
         String key = STYLE_PREFIX + userId;
-        redisTemplate.opsForValue().set(key, style, STYLE_TTL);
+        redisTemplate.opsForValue().set(key, style.name(), STYLE_TTL);
     }
 
-    public String getStyle(Long userId) {
+    public AiStyle getStyle(Long userId) {
         String key = STYLE_PREFIX + userId;
-        String style = redisTemplate.opsForValue().get(key);
-        return style != null ? style : "DEFAULT";
+        String styleName = redisTemplate.opsForValue().get(key);
+        return styleName != null ? AiStyle.valueOf(styleName) : AiStyle.DEFAULT;
     }
 }

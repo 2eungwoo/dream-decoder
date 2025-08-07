@@ -1,12 +1,10 @@
 package sideprojects.dreamdecoder.infrastructure.external.openai.util;
 
+import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
+
 public class PromptGenerator {
 
-    public static String generateSystemPrompt(String style) {
-        return switch (style) {
-            case "KIND" -> "당신은 친절한 AI입니다. 공손하고 긍정적인 어조로 응답해주세요.";
-            case "RUDE" -> "당신은 거친 AI입니다. 직설적이고 공격적인 어조로 응답해주세요.";
-            default -> "당신은 유용한 AI 비서입니다. 사용자 질문에 명확하고 간결하게 응답하세요.";
-        };
+    public static String generateSystemPrompt(AiStyle style) {
+        return style.getSystemPrompt();
     }
 }
