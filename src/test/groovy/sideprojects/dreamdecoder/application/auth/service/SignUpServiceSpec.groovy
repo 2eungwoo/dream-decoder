@@ -1,103 +1,50 @@
 package sideprojects.dreamdecoder.application.auth.service
 
-
 import spock.lang.Specification
+import sideprojects.dreamdecoder.application.auth.usecase.PasswordEncryptUseCase
+import sideprojects.dreamdecoder.application.auth.validator.SignUpValidator
+import sideprojects.dreamdecoder.domain.auth.model.UserModel
 import sideprojects.dreamdecoder.domain.auth.persistence.User
 import sideprojects.dreamdecoder.domain.auth.persistence.UserRepository
-import sideprojects.dreamdecoder.application.auth.service.PasswordEncryptService
-import sideprojects.dreamdecoder.domain.auth.util.exception.AuthException
-import sideprojects.dreamdecoder.domain.auth.util.response.AuthErrorCode
+import sideprojects.dreamdecoder.domain.auth.util.mapper.UserMapper
+import sideprojects.dreamdecoder.presentation.auth.dto.AuthResponse
+import sideprojects.dreamdecoder.presentation.auth.dto.SignUpRequest
 
 class SignUpServiceSpec extends Specification {
 
-    // Mock 객체 선언
     UserRepository userRepository = Mock()
-    PasswordEncryptService passwordEncryptService = Mock()
+    SignUpValidator signUpValidator = Mock()
+    PasswordEncryptUseCase passwordEncryptUseCase = Mock()
+    UserMapper userMapper = Mock()
 
-    // 테스트 대상 객체
     SignUpService signUpService
 
     def setup() {
-        signUpService = new SignUpService(userRepository, passwordEncryptService)
+        signUpService = new SignUpService(userRepository, signUpValidator, passwordEncryptUseCase, userMapper)
     }
 
     def "새로운 사용자가 성공적으로 회원가입되어야 한다"() {
-        given: "회원가입 요청 정보와 암호화된 비밀번호"
-        String username = "testuser"
-        String email = "test@example.com"
-        String rawPassword = "password123"
-        String encryptedPassword = "encryptedPassword123"
+        given: "새로운 사용자 회원가입 요청"
+        def request = new SignUpRequest("newuser", "new@example.com", "password123")
+        def encryptedPassword = "encryptedPassword"
+        def userModel = UserModel.of(request.getUsername(), request.getEmail(), encryptedPassword)
+        def userEntity = User.builder().username(request.getUsername()).email(request.getEmail()).password(encryptedPassword).build()
+        def savedUser = User.builder().id(1L).username(request.getUsername()).email(request.getEmail()).password(encryptedPassword).build()
 
-        // Mocking: 사용자 이름으로 기존 사용자 조회 시 null 반환
-        userRepository.findByUsername(username) >> Optional.empty()
-        // Mocking: 이메일로 기존 사용자 조회 시 null 반환
-        userRepository.findByEmail(email) >> Optional.empty()
-        // Mocking: 비밀번호 암호화 서비스 호출 시 암호화된 비밀번호 반환
-        passwordEncryptService.encrypt(rawPassword) >> encryptedPassword
-        // Mocking: 사용자 저장 시 저장된 사용자 객체 반환
-        userRepository.save(_) >> { User user -> user.builder().id(1L).build() }
+        passwordEncryptUseCase.encrypt(request.getPassword()) >> encryptedPassword
+        userMapper.toEntity(userModel) >> userEntity
+        userRepository.save(userEntity) >> savedUser
 
         when: "회원가입 서비스를 호출하면"
-        User registeredUser = signUpService.signUp(username, email, rawPassword)
+        AuthResponse response = signUpService.execute(request)
 
-        then: "사용자가 성공적으로 등록되고 ID가 할당되어야 한다"
-        registeredUser != null
-        registeredUser.id == 1L
-        registeredUser.username == username
-        registeredUser.email == email
-        registeredUser.password == encryptedPassword
+        then: "사용자 정보가 포함된 응답이 반환되어야 한다"
+        1 * signUpValidator.validate(request)
+        1 * passwordEncryptUseCase.encrypt(request.getPassword())
+        1 * userMapper.toEntity(_ as UserModel)
+        1 * userRepository.save(userEntity)
 
-        // Mocking 검증: 각 메서드가 예상대로 호출되었는지 확인
-        1 * userRepository.findByUsername(username)
-        1 * userRepository.findByEmail(email)
-        1 * passwordEncryptService.encrypt(rawPassword)
-        1 * userRepository.save(_)
-    }
-
-    def "이미 존재하는 사용자 이름으로 회원가입 시 예외가 발생해야 한다"() {
-        given: "이미 존재하는 사용자 이름"
-        String username = "existinguser"
-        String email = "new@example.com"
-        String rawPassword = "password123"
-
-        // Mocking: 사용자 이름으로 기존 사용자 조회 시 Optional.of(User) 반환
-        userRepository.findByUsername(username) >> Optional.of(User.builder().username(username).build())
-
-        when: "회원가입 서비스를 호출하면"
-        signUpService.signUp(username, email, rawPassword)
-
-        then: "AuthException이 발생하고 에러 코드가 USERNAME_ALREADY_EXISTS여야 한다"
-        AuthException e = thrown()
-        e.errorCode == AuthErrorCode.USERNAME_ALREADY_EXISTS
-
-        // Mocking 검증: findByUsername만 호출되고 다른 메서드는 호출되지 않음
-        1 * userRepository.findByUsername(username)
-        0 * userRepository.findByEmail(_)
-        0 * passwordEncryptService.encrypt(_)
-        0 * userRepository.save(_)
-    }
-
-    def "이미 존재하는 이메일로 회원가입 시 예외가 발생해야 한다"() {
-        given: "이미 존재하는 이메일"
-        String username = "newuser"
-        String email = "existing@example.com"
-        String rawPassword = "password123"
-
-        // Mocking: 사용자 이름은 존재하지 않고, 이메일은 존재함
-        userRepository.findByUsername(username) >> Optional.empty()
-        userRepository.findByEmail(email) >> Optional.of(User.builder().email(email).build())
-
-        when: "회원가입 서비스를 호출하면"
-        signUpService.signUp(username, email, rawPassword)
-
-        then: "AuthException이 발생하고 에러 코드가 EMAIL_ALREADY_EXISTS여야 한다"
-        AuthException e = thrown()
-        e.errorCode == AuthErrorCode.EMAIL_ALREADY_EXISTS
-
-        // Mocking 검증
-        1 * userRepository.findByUsername(username)
-        1 * userRepository.findByEmail(email)
-        0 * passwordEncryptService.encrypt(_)
-        0 * userRepository.save(_)
+        response.username() == savedUser.getUsername()
+        response.email() == savedUser.getEmail()
     }
 }
