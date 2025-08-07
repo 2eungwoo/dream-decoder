@@ -1,5 +1,6 @@
 package sideprojects.dreamdecoder.application.dream.usecase.find
 
+import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
 import sideprojects.dreamdecoder.domain.dream.model.Dream
@@ -7,7 +8,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
 
 import java.time.LocalDateTime
 
-class FindDreamByIdUseCaseSpec extends Specification {
+class FindOneDreamUseCaseSpec extends Specification {
 
     DreamService dreamService = Mock()
 
@@ -47,10 +48,10 @@ class FindDreamByIdUseCaseSpec extends Specification {
         dreamService.findDreamById(dreamId) >> Optional.empty()
 
         when: "findById 메소드를 호출하면"
-        def result = findDreamByIdUseCase.findById(dreamId)
+        findDreamByIdUseCase.findById(dreamId)
 
-        then: "빈 Optional이 반환되어야 한다"
-        1 * dreamService.findDreamById(dreamId)
-        !result.isPresent()
+        then: "DreamNotFoundException이 발생해야 한다"
+        thrown(DreamNotFoundException)
+        1 * dreamService.findDreamById(updatedDream)
     }
 }

@@ -69,13 +69,13 @@ class UpdateDreamUseCaseSpec extends Specification {
                 .interpretedAt(LocalDateTime.now())
                 .build()
 
-        dreamService.updateDream(dreamId, updatedDream) >> { throw new DreamNotFoundException("꿈을 찾을 수 없습니다.") }
+        dreamService.updateDream(updatedDream) >> { throw new DreamNotFoundException() }
 
         when: "update 메소드를 호출하면"
-        updateDreamUseCase.update(dreamId, updatedDream)
+        updateDreamUseCase.update(updatedDream)
 
         then: "DreamNotFoundException이 발생해야 한다"
         thrown(DreamNotFoundException)
-        1 * dreamService.updateDream(dreamId, updatedDream)
+        1 * dreamService.updateDream(updatedDream)
     }
 }

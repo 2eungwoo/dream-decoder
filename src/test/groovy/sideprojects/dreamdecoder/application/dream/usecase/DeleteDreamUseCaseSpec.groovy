@@ -32,7 +32,7 @@ class DeleteDreamUseCaseSpec extends Specification {
         given: "존재하지 않는 꿈 ID"
         def dreamId = 99L
 
-        dreamService.deleteDream(dreamId) >> { throw new DreamNotFoundException("삭제할 꿈을 찾을 수 없습니다.") }
+        dreamService.deleteDream(dreamId) >> { throw new DreamNotFoundException() }
 
         when: "delete 메소드를 호출하면"
         deleteDreamUseCase.delete(dreamId)
