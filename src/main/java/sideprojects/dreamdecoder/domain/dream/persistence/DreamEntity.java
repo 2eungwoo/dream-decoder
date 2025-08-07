@@ -20,7 +20,6 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "dreams")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
