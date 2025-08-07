@@ -11,6 +11,11 @@ spring:
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 #  sql:
 #    init:
 #      mode: always
@@ -31,13 +36,6 @@ logging:
   level:
     org.hibernate.type.descriptor.sql: trace
     com.example: debug
-
-
-spring:
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 openai:
   api-key: ${OPENAI_API_KEY}
