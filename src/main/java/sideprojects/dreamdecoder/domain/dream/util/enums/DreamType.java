@@ -28,6 +28,7 @@ public enum DreamType {
     EX_PARTNER(DreamCategory.RELATIONSHIP, DreamOutcome.NEUTRAL, "옛 연인"),
     MARRIAGE(DreamCategory.RELATIONSHIP, DreamOutcome.VERY_GOOD, "결혼/약혼"),
     ARGUMENT(DreamCategory.RELATIONSHIP, DreamOutcome.WARNING, "다툼/갈등"),
+    FRIEND(DreamCategory.RELATIONSHIP, DreamOutcome.NEUTRAL, "친구"),
 
     // 취업/학업/성공 (CAREER)
     JOB_OFFER(DreamCategory.CAREER, DreamOutcome.VERY_GOOD, "입사 제안"),

@@ -1,29 +1,31 @@
 package sideprojects.dreamdecoder.infrastructure.external.openai;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
-import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.AiChatResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.request.ChooseAiStyleRequest;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.ChooseAiStyleResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.AiStyleService;
-import sideprojects.dreamdecoder.infrastructure.external.openai.service.OpenAiChatService;
+import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationService;
+import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
+import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
 
 @RestController
 @RequiredArgsConstructor
 public class AiChatController {
-    private final OpenAiChatService openAiChatService;
+    private final DreamInterpretationService dreamInterpretationService;
     private final AiStyleService aiStyleService;
 
     @PostMapping("/ai/chat")
-    public ResponseEntity<ApiResponse<AiChatResponse>> chat(@RequestParam Long userId, @RequestBody String prompt) {
-        AiChatResponse result = openAiChatService.chat(userId, prompt);
+    public ResponseEntity<ApiResponse<DreamInterpretationResponse>> interpret(
+            @RequestParam Long userId,
+            @Valid @RequestBody DreamInterpretationRequest request) {
+
+        DreamInterpretationResponse result = dreamInterpretationService.interpretDream(userId, request.getDreamContent());
         return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, result);
     }
 
