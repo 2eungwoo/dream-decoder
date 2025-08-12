@@ -35,15 +35,15 @@ public class DreamService {
         return dreamMapper.toModel(entity);
     }
 
-    @Transactional
-    public Dream updateDream(Long dreamId, Dream updatedDream) {
-        dreamValidator.validateExistingDream(dreamId);
-        return repositoryImpl.update(updatedDream);
-    }
-
-    @Transactional
-    public void deleteDream(Long dreamId) {
-        dreamValidator.validateExistingDream(dreamId);
-        repositoryImpl.deleteById(dreamId);
-    }
+//    @Transactional
+//    public Dream updateDream(Long dreamId, UpdateDreamRequest request) {
+//        dreamValidator.validateExistingDream(dreamId);
+//        return repositoryImpl.update(request);
+//    }
+//
+//    @Transactional
+//    public void deleteDream(Long dreamId) {
+//        dreamValidator.validateExistingDream(dreamId);
+//        repositoryImpl.deleteById(dreamId);
+//    }
 }

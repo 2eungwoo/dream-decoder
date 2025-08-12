@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sideprojects.dreamdecoder.application.dream.usecase.delete.DeleteDreamUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindOneDreamUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
-import sideprojects.dreamdecoder.application.dream.usecase.update.UpdateDreamUseCase;
 import sideprojects.dreamdecoder.domain.dream.model.Dream;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
@@ -31,8 +29,6 @@ public class DreamController {
     private final SaveDreamUseCase saveDreamUseCase;
     private final FindAllDreamsUseCase findAllDreamsUseCase;
     private final FindOneDreamUseCase findOneDreamUseCase;
-    private final UpdateDreamUseCase updateDreamUseCase;
-    private final DeleteDreamUseCase deleteDreamUseCase;
 
     @PostMapping
     public ResponseEntity<ApiResponse<SaveDreamResponse>> saveDream(
@@ -62,6 +58,4 @@ public class DreamController {
 
         return ApiResponse.success(DreamResponseCode.DREAM_FOUND_SUCCESS, response);
     }
-
-
 }

@@ -11,8 +11,8 @@ public class UpdateDreamUseCaseImpl implements UpdateDreamUseCase {
 
     private final DreamService dreamService;
 
-    @Override
-    public Dream update(Long dreamId, Dream updatedDream) {
-        return dreamService.updateDream(dreamId, updatedDream);
-    }
+//    @Override
+//    public Dream update(Long dreamId, UpdateDreamRequest request) {
+//        return dreamService.updateDream(dreamId, request);
+//    }
 }

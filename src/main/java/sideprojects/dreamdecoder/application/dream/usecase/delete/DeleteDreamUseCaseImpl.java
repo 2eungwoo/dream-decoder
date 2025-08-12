@@ -10,8 +10,8 @@ public class DeleteDreamUseCaseImpl implements DeleteDreamUseCase {
 
     private final DreamService dreamService;
 
-    @Override
-    public void delete(Long dreamId) {
-        dreamService.deleteDream(dreamId);
-    }
+//    @Override
+//    public void delete(Long dreamId) {
+//        dreamService.deleteDream(dreamId);
+//    }
 }
