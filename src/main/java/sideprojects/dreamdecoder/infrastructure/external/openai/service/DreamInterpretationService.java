@@ -16,24 +16,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DreamInterpretationService {
 
-    private final AiStyleService aiStyleService;
+    
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
     private final SaveDreamUseCase saveDreamUseCase;
 
-    public DreamInterpretationResponse interpretDream(Long userId, String dreamContent) {
-        AiStyle style = aiStyleService.getChosenStyle(userId);
+    public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
+        AiStyle actualStyle = (style != null) ? style : AiStyle.DEFAULT;
 
         // 사용자 채팅에서 키워드 추출
         List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
 
         // 추출 키워드로 해몽 생성
-        String interpretation = dreamInterpretationGeneratorService.generateInterpretation(style, extractedTypes, dreamContent);
+        String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
 
-        SaveDreamRequest dreamSaveRequest = new SaveDreamRequest(userId, dreamContent, interpretation, style);
+        SaveDreamRequest dreamSaveRequest = new SaveDreamRequest(userId, dreamContent, interpretation, actualStyle);
         saveDreamUseCase.save(dreamSaveRequest);
 
-        return DreamInterpretationResponse.of(interpretation, style, extractedTypes);
+        return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
     }
 }
 

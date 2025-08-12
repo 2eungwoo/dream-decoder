@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class PromptGenerator {
 
     public static String generateSystemPrompt(AiStyle style) {
-        return style.getSystemPrompt();
+        return style.getStyle();
     }
 
     public static String generateSymbolExtractionSystemPrompt(List<String> allTypeNames) {
@@ -33,6 +33,6 @@ public class PromptGenerator {
                 "사용자의 꿈에는 다음과 같은 핵심 상징들이 포함되어 있습니다: %s. " + 
                 "이 상징들을 바탕으로 사용자의 꿈에 대한 포괄적인 해몽을 제공하세요. " +
                 "상징들의 의미를 결합하여 일관성 있는 이야기를 전달하고, 해당되는 경우 조언을 제공하세요. " + 
-                "사용자에게 직접적으로 말을 걸고 자연스럽고 대화적인 어조로 작성하세요.", style.getSystemPrompt(), symbols);
+                "사용자에게 직접적으로 말을 걸고 자연스럽고 대화적인 어조로 작성하세요.", style.getStyle(), symbols);
     }
 }
