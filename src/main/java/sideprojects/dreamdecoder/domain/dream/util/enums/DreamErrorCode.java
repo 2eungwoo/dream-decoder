@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.domain.dream.util.response;
+package sideprojects.dreamdecoder.domain.dream.util.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
