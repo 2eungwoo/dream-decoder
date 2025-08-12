@@ -14,6 +14,8 @@ public class Dream {
     private String interpretationResult;
     private AiStyle aiStyle;
     private LocalDateTime interpretedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Builder
     private Dream(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, LocalDateTime interpretedAt) {
