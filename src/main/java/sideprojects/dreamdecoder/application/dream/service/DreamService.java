@@ -1,20 +1,14 @@
 package sideprojects.dreamdecoder.application.dream.service;
 
-import static sideprojects.dreamdecoder.domain.dream.util.response.DreamErrorCode.DREAM_NOT_FOUND;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideprojects.dreamdecoder.application.dream.validator.DreamValidator;
 import sideprojects.dreamdecoder.domain.dream.model.Dream;
 import sideprojects.dreamdecoder.domain.dream.persistence.DreamEntity;
-import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException;
 import sideprojects.dreamdecoder.domain.dream.util.mapper.DreamMapper;
-import sideprojects.dreamdecoder.domain.dream.util.response.DreamResponseCode;
 
 import java.util.List;
-import java.util.Optional;
-import sideprojects.dreamdecoder.infrastructure.persistence.dream.DreamJpaRepository;
 import sideprojects.dreamdecoder.infrastructure.persistence.dream.DreamRepositoryImpl;
 
 @Service
