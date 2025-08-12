@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindOneDreamUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamResponseCode;
@@ -33,17 +33,17 @@ public class DreamController {
     @PostMapping
     public ResponseEntity<ApiResponse<SaveDreamResponse>> saveDream(
         @RequestBody @Valid SaveDreamRequest request) {
-        Dream savedDream = saveDreamUseCase.save(request);
-        SaveDreamResponse response = SaveDreamResponse.of(savedDream);
+        DreamModel savedDreamModel = saveDreamUseCase.save(request);
+        SaveDreamResponse response = SaveDreamResponse.of(savedDreamModel);
 
         return ApiResponse.success(DreamResponseCode.DREAM_SAVE_SUCCESS, response);
     }
 
     @GetMapping()
     public ResponseEntity<ApiResponse<List<FindAllDreamResponse>>> findAllDream() {
-        List<Dream> dreams = findAllDreamsUseCase.findAll();
+        List<DreamModel> dreamModels = findAllDreamsUseCase.findAll();
 
-        List<FindAllDreamResponse> responseList = dreams.stream()
+        List<FindAllDreamResponse> responseList = dreamModels.stream()
             .map(FindAllDreamResponse::of)
             .toList();
 
@@ -53,8 +53,8 @@ public class DreamController {
     @GetMapping("/{dreamId}")
     public ResponseEntity<ApiResponse<FindOneDreamResponse>> findOneDream(
         @PathVariable Long dreamId) {
-        Dream dream = findOneDreamUseCase.findById(dreamId);
-        FindOneDreamResponse response = FindOneDreamResponse.of(dream);
+        DreamModel dreamModel = findOneDreamUseCase.findById(dreamId);
+        FindOneDreamResponse response = FindOneDreamResponse.of(dreamModel);
 
         return ApiResponse.success(DreamResponseCode.DREAM_FOUND_SUCCESS, response);
     }

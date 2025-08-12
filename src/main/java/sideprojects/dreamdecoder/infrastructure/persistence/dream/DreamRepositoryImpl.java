@@ -4,13 +4,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sideprojects.dreamdecoder.application.dream.service.DreamRepository;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.persistence.DreamEntity;
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException;
 import sideprojects.dreamdecoder.domain.dream.util.mapper.DreamMapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static sideprojects.dreamdecoder.domain.dream.persistence.QDreamEntity.dreamEntity;
@@ -24,20 +23,20 @@ public class DreamRepositoryImpl implements DreamRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Dream save(Dream dream) {
-        DreamEntity dreamEntity = dreamMapper.toEntity(dream);
+    public DreamModel save(DreamModel dreamModel) {
+        DreamEntity dreamEntity = dreamMapper.toEntity(dreamModel);
         DreamEntity savedEntity = dreamJpaRepository.save(dreamEntity);
         return dreamMapper.toModel(savedEntity);
     }
 
     @Override
-    public List<Dream> findAll() {
+    public List<DreamModel> findAll() {
         return queryFactory
                 .select(new QDreamProjectionDto(dreamEntity.id, dreamEntity.userId, dreamEntity.dreamContent, dreamEntity.interpretationResult, dreamEntity.aiStyle, dreamEntity.interpretedAt))
                 .from(dreamEntity)
                 .fetch()
                 .stream()
-                .map(dto -> Dream.builder()
+                .map(dto -> DreamModel.builder()
                         .id(dto.id())
                         .userId(dto.userId())
                         .dreamContent(dto.dreamContent())
@@ -49,7 +48,7 @@ public class DreamRepositoryImpl implements DreamRepository {
     }
 
     @Override
-    public Dream findById(Long id) {
+    public DreamModel findById(Long id) {
         DreamEntity entity = dreamJpaRepository.findById(id)
             .orElseThrow(DreamNotFoundException::new);
         return dreamMapper.toModel(entity);
@@ -57,8 +56,8 @@ public class DreamRepositoryImpl implements DreamRepository {
     }
 
     @Override
-    public Dream update(Dream updatedDream) {
-        return dreamMapper.toModel(dreamJpaRepository.save(updatedDream));
+    public DreamModel update(DreamModel updatedDreamModel) {
+        return dreamMapper.toModel(dreamJpaRepository.save(updatedDreamModel));
     }
 
     @Override

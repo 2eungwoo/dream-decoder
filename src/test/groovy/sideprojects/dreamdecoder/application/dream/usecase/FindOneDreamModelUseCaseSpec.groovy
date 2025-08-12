@@ -1,14 +1,15 @@
 package sideprojects.dreamdecoder.application.dream.usecase.find
 
+
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
-import sideprojects.dreamdecoder.domain.dream.model.Dream
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
 
 import java.time.LocalDateTime
 
-class FindOneDreamUseCaseSpec extends Specification {
+class FindOneDreamModelUseCaseSpec extends Specification {
 
     DreamService dreamService = Mock()
 
@@ -21,7 +22,7 @@ class FindOneDreamUseCaseSpec extends Specification {
     def "ID로 꿈을 성공적으로 조회해야 한다"() {
         given: "조회할 꿈이 존재한다"
         def dreamId = 1L
-        def expectedDream = Dream.builder()
+        def expectedDream = DreamModel.builder()
                 .id(dreamId)
                 .userId(1L)
                 .dreamContent("꿈 내용")

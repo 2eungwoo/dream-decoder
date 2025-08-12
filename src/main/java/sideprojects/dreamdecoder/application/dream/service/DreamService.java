@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sideprojects.dreamdecoder.application.dream.validator.DreamValidator;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.persistence.DreamEntity;
 import sideprojects.dreamdecoder.domain.dream.util.mapper.DreamMapper;
 
@@ -20,17 +20,17 @@ public class DreamService {
     private final DreamMapper dreamMapper;
 
     @Transactional
-    public Dream saveDream(Dream dream) {
-        return repositoryImpl.save(dream);
+    public DreamModel saveDream(DreamModel dreamModel) {
+        return repositoryImpl.save(dreamModel);
     }
 
     @Transactional(readOnly = true)
-    public List<Dream> findAllDreams() {
+    public List<DreamModel> findAllDreams() {
         return repositoryImpl.findAll();
     }
 
     @Transactional(readOnly = true)
-    public Dream findDreamById(Long dreamId) {
+    public DreamModel findDreamById(Long dreamId) {
         DreamEntity entity = dreamValidator.validateExistingDreamAndFind(dreamId);
         return dreamMapper.toModel(entity);
     }

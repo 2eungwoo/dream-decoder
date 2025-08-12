@@ -3,7 +3,6 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
 import sideprojects.dreamdecoder.infrastructure.external.openai.config.OpenAiClient;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.AiChatResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;

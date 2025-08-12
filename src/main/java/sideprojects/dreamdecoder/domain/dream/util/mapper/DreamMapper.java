@@ -1,13 +1,13 @@
 package sideprojects.dreamdecoder.domain.dream.util.mapper;
 
 import org.mapstruct.Mapper;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.persistence.DreamEntity;
 
 @Mapper(componentModel = "spring")
 public interface DreamMapper {
 
-    DreamEntity toEntity(Dream dream);
+    DreamEntity toEntity(DreamModel dreamModel);
 
-    Dream toModel(DreamEntity dreamEntity);
+    DreamModel toModel(DreamEntity dreamEntity);
 }

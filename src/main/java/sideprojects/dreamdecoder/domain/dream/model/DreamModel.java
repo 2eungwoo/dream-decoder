@@ -7,7 +7,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import java.time.LocalDateTime;
 
 @Getter
-public class Dream {
+public class DreamModel {
     private Long id;
     private Long userId;
     private String dreamContent;
@@ -18,7 +18,7 @@ public class Dream {
     private LocalDateTime updatedAt;
 
     @Builder
-    private Dream(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, LocalDateTime interpretedAt) {
+    private DreamModel(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, LocalDateTime interpretedAt) {
         this.id = id;
         this.userId = userId;
         this.dreamContent = dreamContent;
@@ -27,8 +27,8 @@ public class Dream {
         this.interpretedAt = interpretedAt;
     }
 
-    public static Dream createNewDream(Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle) {
-        return Dream.builder()
+    public static DreamModel createNewDream(Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle) {
+        return DreamModel.builder()
                 .userId(userId)
                 .dreamContent(dreamContent)
                 .interpretationResult(interpretationResult)

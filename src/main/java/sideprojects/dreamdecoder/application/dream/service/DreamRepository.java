@@ -1,12 +1,12 @@
 package sideprojects.dreamdecoder.application.dream.service;
 
 import java.util.List;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 
 public interface DreamRepository {
-    Dream save(Dream dream);
-    List<Dream> findAll();
-    Dream findById(Long id);
-    Dream update(Dream updatedDream);
+    DreamModel save(DreamModel dreamModel);
+    List<DreamModel> findAll();
+    DreamModel findById(Long id);
+    DreamModel update(DreamModel updatedDreamModel);
     void deleteById(Long dreamId);
 }

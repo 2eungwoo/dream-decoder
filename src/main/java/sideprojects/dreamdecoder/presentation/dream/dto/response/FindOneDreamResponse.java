@@ -1,7 +1,7 @@
 package sideprojects.dreamdecoder.presentation.dream.dto.response;
 
 import java.time.LocalDateTime;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 public record FindOneDreamResponse(
@@ -15,16 +15,16 @@ public record FindOneDreamResponse(
     LocalDateTime updatedAt
 ) {
 
-    public static FindOneDreamResponse of(Dream dream){
+    public static FindOneDreamResponse of(DreamModel dreamModel){
         return new FindOneDreamResponse(
-            dream.getId(),
-            dream.getUserId(),
-            dream.getDreamContent(),
-            dream.getInterpretationResult(),
-            dream.getAiStyle(),
-            dream.getInterpretedAt(),
-            dream.getCreatedAt(),
-            dream.getUpdatedAt()
+            dreamModel.getId(),
+            dreamModel.getUserId(),
+            dreamModel.getDreamContent(),
+            dreamModel.getInterpretationResult(),
+            dreamModel.getAiStyle(),
+            dreamModel.getInterpretedAt(),
+            dreamModel.getCreatedAt(),
+            dreamModel.getUpdatedAt()
         );
     }
 }

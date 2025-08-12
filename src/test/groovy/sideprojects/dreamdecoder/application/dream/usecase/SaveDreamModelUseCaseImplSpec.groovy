@@ -1,15 +1,12 @@
 package sideprojects.dreamdecoder.application.dream.usecase.save
 
+
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
-import sideprojects.dreamdecoder.domain.dream.model.Dream
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
 
-import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
-
-import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCaseImpl
-
-class SaveDreamUseCaseImplSpec extends Specification {
+class SaveDreamModelUseCaseImplSpec extends Specification {
 
     DreamService dreamService = Mock()
 
@@ -26,8 +23,8 @@ class SaveDreamUseCaseImplSpec extends Specification {
         def interpretationResult = "자유를 갈망하는 마음이 반영된 꿈입니다."
         def aiStyle = AiStyle.DEFAULT
 
-        def dreamToSave = Dream.createNewDream(userId, dreamContent, interpretationResult, aiStyle)
-        def savedDream = Dream.builder()
+        def dreamToSave = DreamModel.createNewDream(userId, dreamContent, interpretationResult, aiStyle)
+        def savedDream = DreamModel.builder()
                 .id(1L)
                 .userId(userId)
                 .dreamContent(dreamContent)
@@ -36,13 +33,13 @@ class SaveDreamUseCaseImplSpec extends Specification {
                 .interpretedAt(dreamToSave.getInterpretedAt())
                 .build()
 
-        dreamService.saveDream(_ as Dream) >> savedDream
+        dreamService.saveDream(_ as DreamModel) >> savedDream
 
         when: "save 메소드를 호출하면"
         def result = saveDreamUseCaseImpl.save(dreamToSave)
 
         then: "저장된 Dream 객체가 반환되어야 한다"
-        1 * dreamService.saveDream(_ as Dream)
+        1 * dreamService.saveDream(_ as DreamModel)
         result.id == savedDream.id
         result.userId == savedDream.userId
         result.dreamContent == savedDream.dreamContent

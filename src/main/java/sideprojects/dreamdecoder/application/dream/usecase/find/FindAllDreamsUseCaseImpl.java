@@ -3,8 +3,7 @@ package sideprojects.dreamdecoder.application.dream.usecase.find;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.service.DreamService;
-import sideprojects.dreamdecoder.domain.dream.model.Dream;
-import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCase;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class FindAllDreamsUseCaseImpl implements FindAllDreamsUseCase {
     private final DreamService dreamService;
 
     @Override
-    public List<Dream> findAll() {
+    public List<DreamModel> findAll() {
         return dreamService.findAllDreams();
     }
 }

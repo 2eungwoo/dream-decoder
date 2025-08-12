@@ -1,15 +1,15 @@
 package sideprojects.dreamdecoder.application.dream.usecase.update
 
+
 import spock.lang.Specification
 import sideprojects.dreamdecoder.application.dream.service.DreamService
-import sideprojects.dreamdecoder.domain.dream.model.Dream
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
-import sideprojects.dreamdecoder.application.dream.usecase.update.UpdateDreamUseCaseImpl
 
 import java.time.LocalDateTime
 
-class UpdateDreamUseCaseSpec extends Specification {
+class UpdateDreamModelUseCaseSpec extends Specification {
 
     DreamService dreamService = Mock()
 
@@ -22,7 +22,7 @@ class UpdateDreamUseCaseSpec extends Specification {
     def "꿈을 성공적으로 수정해야 한다"() {
         given: "수정할 꿈과 업데이트된 내용"
         def dreamId = 1L
-        def existingDream = Dream.builder()
+        def existingDream = DreamModel.builder()
                 .id(dreamId)
                 .userId(1L)
                 .dreamContent("원래 꿈 내용")
@@ -35,7 +35,7 @@ class UpdateDreamUseCaseSpec extends Specification {
         def updatedInterpretationResult = "수정된 해몽 결과"
         def updatedAiStyle = AiStyle.KIND
 
-        def updatedDream = Dream.builder()
+        def updatedDream = DreamModel.builder()
                 .id(dreamId)
                 .userId(1L)
                 .dreamContent(updatedDreamContent)
@@ -60,7 +60,7 @@ class UpdateDreamUseCaseSpec extends Specification {
     def "존재하지 않는 꿈 수정 시 DreamNotFoundException이 발생해야 한다"() {
         given: "존재하지 않는 꿈 ID와 업데이트된 내용"
         def dreamId = 99L
-        def updatedDream = Dream.builder()
+        def updatedDream = DreamModel.builder()
                 .id(dreamId)
                 .userId(1L)
                 .dreamContent("수정된 꿈 내용")

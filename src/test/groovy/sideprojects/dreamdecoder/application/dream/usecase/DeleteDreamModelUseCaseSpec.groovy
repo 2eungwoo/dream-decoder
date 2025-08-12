@@ -5,7 +5,7 @@ import sideprojects.dreamdecoder.application.dream.service.DreamService
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException
 import sideprojects.dreamdecoder.application.dream.usecase.delete.DeleteDreamUseCaseImpl
 
-class DeleteDreamUseCaseSpec extends Specification {
+class DeleteDreamModelUseCaseSpec extends Specification {
 
     DreamService dreamService = Mock()
 
