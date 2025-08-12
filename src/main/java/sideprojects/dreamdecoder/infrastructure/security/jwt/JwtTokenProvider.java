@@ -3,6 +3,7 @@ package sideprojects.dreamdecoder.infrastructure.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.io.Decoders;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -54,16 +56,16 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            // Invalid JWT signature
-        } catch (MalformedJwtException ex) {
-            // Invalid JWT token
-        } catch (ExpiredJwtException ex) {
-            // Expired JWT token
-        } catch (UnsupportedJwtException ex) {
-            // Unsupported JWT token
-        } catch (IllegalArgumentException ex) {
-            // JWT claims string is empty.
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature",e);
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token",e);
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token",e);
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token",e);
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.",e);
         }
         return false;
     }
