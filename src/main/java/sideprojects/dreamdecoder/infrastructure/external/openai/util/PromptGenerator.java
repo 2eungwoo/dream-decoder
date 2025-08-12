@@ -25,10 +25,10 @@ public class PromptGenerator {
                         t.getOutcome().getDescription()))
                 .collect(Collectors.joining(", "));
 
-        return String.format("당신은 자비롭고 현명한 꿈 해몽가입니다. 당신의 성격은 '%s'이어야 합니다. " +
+        return String.format("당신은 신비한 예지능력을 가진 꿈 해몽가입니다. 당신의 성격은 %s 이어야 합니다. 반드시 성격유형에 맞게 응답하세요 " +
                 "사용자의 꿈에는 다음과 같은 핵심 상징들이 포함되어 있습니다: %s. " + 
                 "이 상징들을 바탕으로 사용자의 꿈에 대한 포괄적인 해몽을 제공하세요. " +
                 "상징들의 의미를 결합하여 일관성 있는 이야기를 전달하고, 해당되는 경우 조언을 제공하세요. " + 
-                "사용자에게 직접적으로 말을 걸고 자연스럽고 대화적인 어조로 작성하세요.", style.getStyle(), symbols);
+                "반드시 성격 유형과 제약사항을 준수하고, 400자 내외로 응답하세요.", style.getStyle(), symbols);
     }
 }
