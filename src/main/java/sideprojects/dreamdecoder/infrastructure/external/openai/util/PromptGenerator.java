@@ -8,10 +8,6 @@ import java.util.stream.Stream;
 
 public class PromptGenerator {
 
-    public static String generateSystemPrompt(AiStyle style) {
-        return style.getStyle();
-    }
-
     public static String generateSymbolExtractionSystemPrompt(List<String> allTypeNames) {
         String types = String.join(", ", allTypeNames);
         return "당신은 꿈 내용을 분석하고 핵심 상징을 추출하는 AI입니다. " + 
