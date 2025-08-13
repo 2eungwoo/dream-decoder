@@ -30,7 +30,7 @@ public class DreamInterpretationService {
         // 추출 키워드로 해몽 생성
         String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
 
-        SaveDreamRequest dreamSaveRequest = new SaveDreamRequest(userId, dreamContent, interpretation, actualStyle);
+        SaveDreamRequest dreamSaveRequest = new SaveDreamRequest(userId, dreamContent, interpretation, actualStyle, extractedTypes);
         saveDreamUseCase.save(dreamSaveRequest);
 
         return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);

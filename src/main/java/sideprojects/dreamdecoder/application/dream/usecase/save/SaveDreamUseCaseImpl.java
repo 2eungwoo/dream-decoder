@@ -18,7 +18,8 @@ public class SaveDreamUseCaseImpl implements SaveDreamUseCase {
             request.userId(),
             request.dreamContent(),
             request.interpretationResult(),
-            request.aiStyle()
+            request.aiStyle(),
+            request.dreamTypes()
         );
         return dreamService.saveDream(dreamModelToSave);
     }
