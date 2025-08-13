@@ -22,7 +22,7 @@ public class DreamModel {
     private LocalDateTime updatedAt;
 
     @Builder
-    private DreamModel(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, List<DreamType> dreamTypes, LocalDateTime interpretedAt) {
+    private DreamModel(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, List<DreamType> dreamTypes, LocalDateTime interpretedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
         this.dreamContent = dreamContent;
@@ -30,6 +30,8 @@ public class DreamModel {
         this.aiStyle = aiStyle;
         this.dreamTypes = dreamTypes;
         this.interpretedAt = interpretedAt;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public static DreamModel createNewDream(SaveDreamRequest request) {
