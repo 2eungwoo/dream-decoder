@@ -22,7 +22,7 @@ public class DreamInterpretationService {
     private final SaveDreamUseCase saveDreamUseCase;
 
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
-        AiStyle actualStyle = (style != null) ? style : AiStyle.DEFAULT;
+        AiStyle actualStyle = AiStyle.from(style);
 
         // 사용자 채팅에서 키워드 추출
         List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);

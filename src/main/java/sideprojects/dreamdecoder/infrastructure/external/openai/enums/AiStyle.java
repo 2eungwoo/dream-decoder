@@ -3,6 +3,8 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @RequiredArgsConstructor
 public enum AiStyle {
@@ -11,4 +13,8 @@ public enum AiStyle {
     DEFAULT("당신은 유용한 AI 비서입니다. 사용자 질문에 명확하고 간결하게 응답하세요.");
 
     private final String style;
+
+    public static AiStyle from(AiStyle style) {
+        return (style != null) ? style : DEFAULT;
+    }
 }
