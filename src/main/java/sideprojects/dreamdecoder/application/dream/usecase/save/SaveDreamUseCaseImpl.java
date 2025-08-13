@@ -14,13 +14,7 @@ public class SaveDreamUseCaseImpl implements SaveDreamUseCase {
 
     @Override
     public DreamModel save(SaveDreamRequest request) {
-        DreamModel dreamModelToSave = DreamModel.createNewDream(
-            request.userId(),
-            request.dreamContent(),
-            request.interpretationResult(),
-            request.aiStyle(),
-            request.dreamTypes()
-        );
+        DreamModel dreamModelToSave = DreamModel.createNewDream(request);
         return dreamService.saveDream(dreamModelToSave);
     }
 }

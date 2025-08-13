@@ -7,16 +7,17 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
 
 @Getter
 public class DreamModel {
-    private Long id;
-    private Long userId;
-    private String dreamContent;
-    private String interpretationResult;
-    private AiStyle aiStyle;
-    private List<DreamType> dreamTypes;
-    private LocalDateTime interpretedAt;
+    private final Long id;
+    private final Long userId;
+    private final String dreamContent;
+    private final String interpretationResult;
+    private final AiStyle aiStyle;
+    private final List<DreamType> dreamTypes;
+    private final LocalDateTime interpretedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -31,13 +32,13 @@ public class DreamModel {
         this.interpretedAt = interpretedAt;
     }
 
-    public static DreamModel createNewDream(Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, List<DreamType> dreamTypes) {
+    public static DreamModel createNewDream(SaveDreamRequest request) {
         return DreamModel.builder()
-                .userId(userId)
-                .dreamContent(dreamContent)
-                .interpretationResult(interpretationResult)
-                .aiStyle(aiStyle)
-                .dreamTypes(dreamTypes)
+                .userId(request.userId())
+                .dreamContent(request.dreamContent())
+                .interpretationResult(request.interpretationResult())
+                .aiStyle(request.aiStyle())
+                .dreamTypes(request.dreamTypes())
                 .interpretedAt(LocalDateTime.now())
                 .build();
     }

@@ -25,8 +25,7 @@ public class DreamRepositoryImpl implements DreamRepository {
     @Override
     public DreamModel save(DreamModel dreamModel) {
         DreamEntity dreamEntity = dreamMapper.toEntity(dreamModel);
-        DreamEntity savedEntity = dreamJpaRepository.save(dreamEntity);
-        return dreamMapper.toModel(savedEntity);
+        return dreamMapper.toModel(dreamJpaRepository.save(dreamEntity));
     }
 
     @Override
