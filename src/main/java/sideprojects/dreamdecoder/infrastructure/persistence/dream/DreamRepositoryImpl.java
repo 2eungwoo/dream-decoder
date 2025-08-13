@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static sideprojects.dreamdecoder.domain.dream.persistence.QDreamEntity.dreamEntity;
+import static sideprojects.dreamdecoder.domain.dream.persistence.QDreamSymbol.dreamSymbol;
 
 @Repository
 @RequiredArgsConstructor
@@ -48,10 +49,17 @@ public class DreamRepositoryImpl implements DreamRepository {
 
     @Override
     public DreamModel findById(Long id) {
-        DreamEntity entity = dreamJpaRepository.findById(id)
-            .orElseThrow(DreamNotFoundException::new);
-        return dreamMapper.toModel(entity);
+        DreamEntity entity = queryFactory
+                .selectFrom(dreamEntity)
+                .leftJoin(dreamEntity.dreamSymbols).fetchJoin()
+                .where(dreamEntity.id.eq(id))
+                .fetchOne();
 
+        if (entity == null) {
+            throw new DreamNotFoundException();
+        }
+
+        return dreamMapper.toModel(entity);
     }
 
     @Override

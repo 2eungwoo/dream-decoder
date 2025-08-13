@@ -16,8 +16,7 @@ import sideprojects.dreamdecoder.infrastructure.persistence.dream.DreamRepositor
 public class DreamService {
 
     private final DreamRepositoryImpl repositoryImpl;
-    private final DreamValidator dreamValidator;
-    private final DreamMapper dreamMapper;
+    private final DreamRepositoryImpl dreamRepositoryImpl;
 
     @Transactional
     public DreamModel saveDream(DreamModel dreamModel) {
@@ -31,8 +30,7 @@ public class DreamService {
 
     @Transactional(readOnly = true)
     public DreamModel findDreamById(Long dreamId) {
-        DreamEntity entity = dreamValidator.validateExistingDreamAndFind(dreamId);
-        return dreamMapper.toModel(entity);
+        return dreamRepositoryImpl.findById(dreamId);
     }
 
 //    @Transactional

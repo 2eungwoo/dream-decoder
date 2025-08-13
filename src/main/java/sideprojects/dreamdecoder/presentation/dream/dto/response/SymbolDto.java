@@ -1,5 +1,6 @@
 package sideprojects.dreamdecoder.presentation.dream.dto.response;
 
+import sideprojects.dreamdecoder.domain.dream.persistence.DreamSymbol;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 
 public record SymbolDto(
@@ -14,6 +15,15 @@ public record SymbolDto(
                 type.getDescription(),
                 type.getCategory().getDescription(),
                 type.getOutcome().getDescription()
+        );
+    }
+
+    public static SymbolDto of(DreamSymbol dreamSymbol) {
+        return new SymbolDto(
+                dreamSymbol.getType(),
+                dreamSymbol.getDescription(),
+                dreamSymbol.getCategory(),
+                dreamSymbol.getOutcome()
         );
     }
 }
