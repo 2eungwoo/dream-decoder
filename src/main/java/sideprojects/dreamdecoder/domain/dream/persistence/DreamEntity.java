@@ -1,12 +1,15 @@
 package sideprojects.dreamdecoder.domain.dream.persistence;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -18,6 +21,7 @@ import lombok.Setter;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -42,6 +46,10 @@ public class DreamEntity {
     @Column(nullable = false)
     private AiStyle aiStyle;
 
+    @ElementCollection
+    @CollectionTable(name = "dream_symbols", joinColumns = @JoinColumn(name = "dream_id"))
+    private List<DreamSymbol> dreamSymbols;
+
     @Column(name = "interpreted_at", nullable = false)
     private LocalDateTime interpretedAt;
 
@@ -62,12 +70,17 @@ public class DreamEntity {
     }
 
     @Builder
-    private DreamEntity(Long id, Long userId, String dreamContent, String interpretationResult, AiStyle aiStyle, LocalDateTime interpretedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private DreamEntity(Long id, Long userId,
+        String dreamContent, String interpretationResult,
+        AiStyle aiStyle, List<DreamSymbol> dreamSymbols,
+        LocalDateTime interpretedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
+
         this.id = id;
         this.userId = userId;
         this.dreamContent = dreamContent;
         this.interpretationResult = interpretationResult;
         this.aiStyle = aiStyle;
+        this.dreamSymbols = dreamSymbols;
         this.interpretedAt = interpretedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
