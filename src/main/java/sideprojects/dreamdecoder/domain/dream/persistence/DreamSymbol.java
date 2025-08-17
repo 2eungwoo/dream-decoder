@@ -11,7 +11,6 @@ import lombok.Setter;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DreamSymbol {
     private String type;
