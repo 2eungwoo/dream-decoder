@@ -45,3 +45,6 @@ openai:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
+concurrency:
+  permits: 20 # AI 요청 동시 처리 허용량
