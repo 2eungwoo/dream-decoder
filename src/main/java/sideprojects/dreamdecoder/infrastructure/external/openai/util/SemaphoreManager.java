@@ -7,6 +7,8 @@ import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.AiServerBusyException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +34,7 @@ public class SemaphoreManager {
         boolean acquired = semaphore.tryAcquire(WAIT_TIME_SECONDS, TimeUnit.SECONDS);
 
         if (!acquired) {
-            throw new AiServerBusyException("현재 요청이 많아 처리가 지연되고 있습니다. 잠시 후 다시 시도해주세요.");
+            throw new AiServerBusyException(OpenAiErrorCode.OPENAI_SERVER_BUSY);
         }
     }
 
