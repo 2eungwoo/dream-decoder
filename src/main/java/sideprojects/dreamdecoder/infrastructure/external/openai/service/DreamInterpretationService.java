@@ -6,6 +6,11 @@ import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.AiServerBusyException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.SemaphoreAcquireException;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
@@ -20,27 +25,40 @@ public class DreamInterpretationService {
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
     private final SaveDreamUseCase saveDreamUseCase;
+    private final SemaphoreManager semaphoreManager;
 
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
-        AiStyle actualStyle = AiStyle.from(style);
+        try{
+            semaphoreManager.acquire();
+            log.info("AI 서비스 요청을 처리 (유저: {}, 꿈입력내용: {}, AI 스타일: {})", userId, dreamContent, style);
 
-        // 사용자 채팅에서 키워드 추출
-        List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
+            AiStyle actualStyle = AiStyle.from(style);
 
-        // 추출 키워드로 해몽 생성
-        String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
+            // 사용자 채팅에서 키워드 추출
+            List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
 
-        SaveDreamRequest request = SaveDreamRequest.builder()
-            .userId(userId)
-            .dreamContent(dreamContent)
-            .interpretationResult(interpretation)
-            .aiStyle(actualStyle)
-            .dreamTypes(extractedTypes)
-            .build();
+            // 추출 키워드로 해몽 생성
+            String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
 
-        saveDreamUseCase.save(request);
+            SaveDreamRequest request = SaveDreamRequest.builder()
+                .userId(userId)
+                .dreamContent(dreamContent)
+                .interpretationResult(interpretation)
+                .aiStyle(actualStyle)
+                .dreamTypes(extractedTypes)
+                .build();
 
-        return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
+            saveDreamUseCase.save(request);
+
+            return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
+        } catch(InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new AiServerBusyException(OpenAiErrorCode.OPENAI_SERVER_BUSY, e);
+        } finally {
+            semaphoreManager.release();
+        }
+
+
     }
 }
 
