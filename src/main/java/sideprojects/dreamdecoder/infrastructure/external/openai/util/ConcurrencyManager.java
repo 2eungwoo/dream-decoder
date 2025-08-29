@@ -7,7 +7,6 @@ import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import sideprojects.dreamdecoder.global.shared.exception.CustomException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 
