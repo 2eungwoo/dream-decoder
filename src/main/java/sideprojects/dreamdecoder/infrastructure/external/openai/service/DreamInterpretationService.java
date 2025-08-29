@@ -2,16 +2,13 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
+import sideprojects.dreamdecoder.application.dream.event.DreamInterpretationCompletedEvent;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.AiServerBusyException;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.SemaphoreAcquireException;
-import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.ConcurrencyManager;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
 import java.util.List;
@@ -21,44 +18,43 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DreamInterpretationService {
 
-    
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
-    private final SaveDreamUseCase saveDreamUseCase;
-    private final SemaphoreManager semaphoreManager;
+    private final ConcurrencyManager concurrencyManager;
+    private final ApplicationEventPublisher eventPublisher;
 
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
-        try{
-            semaphoreManager.acquire();
-            log.info("AI 서비스 요청을 처리 (유저: {}, 꿈입력내용: {}, AI 스타일: {})", userId, dreamContent, style);
+        RLock lock = concurrencyManager.acquireLock(userId);
+        try {
+            concurrencyManager.acquireSemaphore();
+            try {
+                log.info("AI 서비스 요청 처리 시작 (유저 ID: {})", userId);
 
-            AiStyle actualStyle = AiStyle.from(style);
+                // 3. 핵심 비즈니스 로직
+                AiStyle actualStyle = AiStyle.from(style);
+                List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
+                String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
 
-            // 사용자 채팅에서 키워드 추출
-            List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
+                // 4. 이벤트 발행
+                DreamInterpretationCompletedEvent event = new DreamInterpretationCompletedEvent(
+                        userId, dreamContent, interpretation, actualStyle, extractedTypes
+                );
+                eventPublisher.publishEvent(event);
+                log.info("AI 서비스 이벤트 발행 (유저 ID: {})", userId);
 
-            // 추출 키워드로 해몽 생성
-            String interpretation = dreamInterpretationGeneratorService.generateInterpretation(actualStyle, extractedTypes, dreamContent);
+                // 5. 사용자에게 즉시 응답
+                return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
 
-            SaveDreamRequest request = SaveDreamRequest.builder()
-                .userId(userId)
-                .dreamContent(dreamContent)
-                .interpretationResult(interpretation)
-                .aiStyle(actualStyle)
-                .dreamTypes(extractedTypes)
-                .build();
-
-            saveDreamUseCase.save(request);
-
-            return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
-        } catch(InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new AiServerBusyException(OpenAiErrorCode.OPENAI_SERVER_BUSY, e);
+            } finally {
+                // 6. 자원 해제 (세마포어)
+                concurrencyManager.releaseSemaphore();
+            }
         } finally {
-            semaphoreManager.release();
+            // 6. 자원 해제 (락)
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-
-
     }
 }
 
