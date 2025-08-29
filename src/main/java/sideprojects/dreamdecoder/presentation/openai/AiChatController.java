@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.infrastructure.external.openai;
+package sideprojects.dreamdecoder.presentation.openai;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
