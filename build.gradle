@@ -53,7 +53,7 @@ dependencies {
     testImplementation 'net.bytebuddy:byte-buddy:1.14.12'
     testImplementation 'org.objenesis:objenesis:3.3'
 
-    implementation 'org.redisson:redisson-spring-boot-starter:3.50.0'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.31.0'
 
 }
 
