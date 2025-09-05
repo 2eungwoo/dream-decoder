@@ -5,11 +5,14 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "concurrency")
-public class ConcurrencyProperties {
+@ConfigurationProperties(prefix = "concurrency.duplicate-request-lock")
+public class DuplicateRequestLockProperties {
 
-    private int permits;
+    private String keyPrefix;
+    private Duration ttl;
 }

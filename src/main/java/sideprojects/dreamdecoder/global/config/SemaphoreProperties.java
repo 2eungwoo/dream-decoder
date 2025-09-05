@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "concurrency")
-public class ConcurrencyProperties {
+@ConfigurationProperties(prefix = "concurrency.semaphore")
+public class SemaphoreProperties {
 
-    private int permits;
+    private String key;
+    private long waitTimeSeconds;
 }
