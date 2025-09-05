@@ -48,3 +48,9 @@ jwt:
 
 concurrency:
   permits: 20 # AI 요청 동시 처리 허용량
+  duplicate-request-lock:
+    key-prefix: "lock:ai-chat:user:"
+    ttl: 3s
+  semaphore:
+    key: "semaphore:ai-chat"
+    wait-time-seconds: 5

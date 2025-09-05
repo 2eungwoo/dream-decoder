@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
+import sideprojects.dreamdecoder.global.config.ConcurrencyProperties;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
@@ -20,14 +21,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DreamInterpretationService {
 
-    private static final String DUPLICATE_REQUEST_LOCK_KEY_PREFIX = "lock:ai-chat:user:";
-    private static final Duration DUPLICATE_REQUEST_LOCK_TTL = Duration.ofSeconds(3);
-
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
     private final SemaphoreManager semaphoreManager;
     private final DreamSaveJobProducer dreamSaveJobProducer;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ConcurrencyProperties concurrencyProperties;
 
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
         checkDuplicateRequest(userId);
@@ -40,9 +39,12 @@ public class DreamInterpretationService {
     }
 
     private void checkDuplicateRequest(Long userId) {
-        String lockKey = DUPLICATE_REQUEST_LOCK_KEY_PREFIX + userId;
+        ConcurrencyProperties.DuplicateRequestLock lockProperties = concurrencyProperties.getDuplicateRequestLock();
+        String lockKey = lockProperties.getKeyPrefix() + userId;
+        Duration ttl = lockProperties.getTtl();
+
         Boolean acquired = redisTemplate.opsForValue()
-                .setIfAbsent(lockKey, "locked", DUPLICATE_REQUEST_LOCK_TTL);
+                .setIfAbsent(lockKey, "locked", ttl);
 
         if (Boolean.FALSE.equals(acquired)) {
             throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
