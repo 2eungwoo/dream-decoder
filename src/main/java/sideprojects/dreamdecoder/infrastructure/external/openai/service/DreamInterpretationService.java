@@ -2,18 +2,14 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
-import sideprojects.dreamdecoder.global.config.DuplicateRequestLockProperties;
+import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
-import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -25,28 +21,14 @@ public class DreamInterpretationService {
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
     private final SemaphoreManager semaphoreManager;
     private final DreamSaveJobProducer dreamSaveJobProducer;
-    private final RedisTemplate<String, String> redisTemplate;
-    private final DuplicateRequestLockProperties duplicateRequestLockProperties;
 
+    @PreventDuplicateRequest(key = "#userId")
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
-        checkDuplicateRequest(userId);
         try {
             semaphoreManager.acquireSemaphore();
             return processDreamLogicAndPublishJob(userId, dreamContent, style);
         } finally {
             semaphoreManager.releaseSemaphore();
-        }
-    }
-
-    private void checkDuplicateRequest(Long userId) {
-        String lockKey = duplicateRequestLockProperties.getKeyPrefix() + userId;
-        Duration ttl = duplicateRequestLockProperties.getTtl();
-
-        Boolean acquired = redisTemplate.opsForValue()
-                .setIfAbsent(lockKey, "locked", ttl);
-
-        if (Boolean.FALSE.equals(acquired)) {
-            throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
         }
     }
 
