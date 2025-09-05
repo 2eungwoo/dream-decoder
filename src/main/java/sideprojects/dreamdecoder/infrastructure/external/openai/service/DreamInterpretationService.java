@@ -2,14 +2,17 @@ package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.ConcurrencyManager;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
@@ -17,25 +20,33 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DreamInterpretationService {
 
+    private static final String DUPLICATE_REQUEST_LOCK_KEY_PREFIX = "lock:ai-chat:user:";
+    private static final Duration DUPLICATE_REQUEST_LOCK_TTL = Duration.ofSeconds(3);
+
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
-    private final ConcurrencyManager concurrencyManager;
+    private final SemaphoreManager semaphoreManager;
     private final DreamSaveJobProducer dreamSaveJobProducer;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent, AiStyle style) {
-        RLock lock = null;
+        checkDuplicateRequest(userId);
         try {
-            lock = acquireConcurrencyResources(userId);
+            semaphoreManager.acquireSemaphore();
             return processDreamLogicAndPublishJob(userId, dreamContent, style);
         } finally {
-            releaseConcurrencyResources(lock);
+            semaphoreManager.releaseSemaphore();
         }
     }
 
-    private RLock acquireConcurrencyResources(Long userId) {
-        RLock lock = concurrencyManager.acquireLock(userId);
-        concurrencyManager.acquireSemaphore();
-        return lock;
+    private void checkDuplicateRequest(Long userId) {
+        String lockKey = DUPLICATE_REQUEST_LOCK_KEY_PREFIX + userId;
+        Boolean acquired = redisTemplate.opsForValue()
+                .setIfAbsent(lockKey, "locked", DUPLICATE_REQUEST_LOCK_TTL);
+
+        if (Boolean.FALSE.equals(acquired)) {
+            throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
+        }
     }
 
     private DreamInterpretationResponse processDreamLogicAndPublishJob(Long userId, String dreamContent, AiStyle style) {
@@ -48,15 +59,5 @@ public class DreamInterpretationService {
         dreamSaveJobProducer.publishJob(userId, dreamContent, interpretation, actualStyle, extractedTypes);
 
         return DreamInterpretationResponse.of(interpretation, actualStyle, extractedTypes);
-    }
-
-    private void releaseConcurrencyResources(RLock lock) {
-        try {
-            concurrencyManager.releaseSemaphore();
-        } finally {
-            if (lock != null && lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
     }
 }

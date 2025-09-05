@@ -1,5 +1,6 @@
 package sideprojects.dreamdecoder.application.dream.consumer;
 
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
@@ -21,7 +22,7 @@ public class DreamSaveJobPoller {
         try {
             StreamReadGroupArgs args = StreamReadGroupArgs.neverDelivered()
                     .count(1)
-                    .timeout(5, TimeUnit.SECONDS);
+                    .timeout(Duration.ofSeconds(5));
 
             Map<StreamMessageId, Map<String, String>> messages = stream.readGroup(
                     groupName,
