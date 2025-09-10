@@ -4,8 +4,10 @@ import static sideprojects.dreamdecoder.global.shared.response.CommonErrorCode.*
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,8 +23,15 @@ import sideprojects.dreamdecoder.global.shared.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
-    protected ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(org.springframework.dao.DataIntegrityViolationException ex) {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableExceptionException(HttpMessageNotReadableException ex) {
+        ErrorCode errorCode = INVALID_INPUT_VALUE;
+        log.error("HttpMessageNotReadableException 발생: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         ErrorCode errorCode = INVALID_INPUT_VALUE;
         log.error("DataIntegrityViolationException 발생: {}", ex.getMessage(), ex);
         return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
@@ -75,6 +84,13 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = INVALID_INPUT_VALUE;
         log.error("MethodArgumentNotValidException 발생: {}", ex.getMessage(), ex);
         return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode, ex.getBindingResult()));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        ErrorCode errorCode = INVALID_INPUT_VALUE;
+        log.error("HttpMessageNotReadableException 발생: {}", ex.getMessage(), ex);
+        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
     }
 
     @ExceptionHandler(CustomException.class)
