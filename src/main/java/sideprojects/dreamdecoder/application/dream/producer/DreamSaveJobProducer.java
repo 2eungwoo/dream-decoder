@@ -7,6 +7,7 @@ import org.redisson.api.RStream;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.stream.StreamAddArgs;
 import org.springframework.stereotype.Component;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
@@ -23,13 +24,15 @@ public class DreamSaveJobProducer {
     private final RedissonClient redissonClient;
     private final ObjectMapper objectMapper;
 
-    public void publishJob(Long userId, String dreamContent, String interpretation, AiStyle style, List<DreamType> types) {
+    public void publishJob(Long userId, String dreamContent, String interpretation, DreamEmotion dreamEmotion, String tags, AiStyle style, List<DreamType> types) {
         try {
             RStream<String, String> stream = redissonClient.getStream(STREAM_KEY);
             Map<String, String> messageBody = Map.of(
                     "userId", userId.toString(),
                     "dreamContent", dreamContent,
                     "interpretationResult", interpretation,
+                    "dreamEmotion", dreamEmotion.name(),
+                    "tags", tags,
                     "aiStyle", style.name(),
                     "dreamTypes", objectMapper.writeValueAsString(types)
             );
