@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         ErrorCode errorCode = INVALID_INPUT_VALUE;
         log.error("HttpMessageNotReadableException 발생: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
+        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode, ex.getLocalizedMessage()));
     }
 
     @ExceptionHandler(CustomException.class)
