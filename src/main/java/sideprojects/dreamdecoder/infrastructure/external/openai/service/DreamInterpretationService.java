@@ -41,7 +41,7 @@ public class DreamInterpretationService {
         AiStyle actualStyle = AiStyle.from(style);
         List<DreamType> extractedTypes = dreamSymbolExtractorService.extractSymbols(dreamContent);
         String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
-            actualStyle, extractedTypes, dreamContent);
+            actualStyle, dreamEmotion, extractedTypes, dreamContent);
 
         DreamSaveJobCommand command = DreamSaveJobCommand.builder()
                 .userId(userId)

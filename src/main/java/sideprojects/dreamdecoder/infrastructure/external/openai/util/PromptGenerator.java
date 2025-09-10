@@ -1,5 +1,6 @@
 package sideprojects.dreamdecoder.infrastructure.external.openai.util;
 
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import java.util.List;
@@ -17,7 +18,7 @@ public class PromptGenerator {
                 "상징을 찾지 못했다면 빈 배열 []을 반환하세요. 어떠한 설명이나 서문도 추가하지 마세요.";
     }
 
-    public static String generateInterpretationSystemPrompt(AiStyle style, List<DreamType> extractedTypes) {
+    public static String generateInterpretationSystemPrompt(AiStyle style, DreamEmotion dreamEmotion, List<DreamType> extractedTypes) {
         String symbols = extractedTypes.stream()
                 .map(t -> String.format("'%s'(%s, %s)",
                         t.getDescription(),
@@ -26,9 +27,10 @@ public class PromptGenerator {
                 .collect(Collectors.joining(", "));
 
         return String.format("당신은 신비한 예지능력을 가진 꿈 해몽가입니다. 당신의 성격은 %s 이어야 합니다. 반드시 성격유형에 맞게 응답하세요 " +
-                "사용자의 꿈에는 다음과 같은 핵심 상징들이 포함되어 있습니다: %s. " + 
+                "사용자의 꿈에는 다음과 같은 핵심 상징들이 포함되어 있습니다: %s. " +
+                "꿈을 꿀 때 느낀 감정은 '%s'입니다. " +
                 "이 상징들을 바탕으로 사용자의 꿈에 대한 포괄적인 해몽을 제공하세요. " +
                 "상징들의 의미를 결합하여 일관성 있는 이야기를 전달하고, 해당되는 경우 조언을 제공하세요. " + 
-                "반드시 성격 유형과 제약사항을 준수하고, 400자 내외로 응답하세요.", style.getStyle(), symbols);
+                "반드시 성격 유형과 제약사항을 준수하고, 400자 내외로 응답하세요.", style.getStyle(), symbols, dreamEmotion.getDescription());
     }
 }
