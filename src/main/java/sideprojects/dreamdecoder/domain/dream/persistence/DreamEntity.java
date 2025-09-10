@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +42,13 @@ public class DreamEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String interpretationResult;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DreamEmotion dreamEmotion; // New field
+
+    @Column(columnDefinition = "TEXT") // New field, nullable
+    private String tags;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -72,6 +80,7 @@ public class DreamEntity {
     @Builder
     private DreamEntity(Long id, Long userId,
         String dreamContent, String interpretationResult,
+        DreamEmotion dreamEmotion, String tags, // New fields
         AiStyle aiStyle, List<DreamSymbol> dreamSymbols,
         LocalDateTime interpretedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
 
@@ -79,6 +88,8 @@ public class DreamEntity {
         this.userId = userId;
         this.dreamContent = dreamContent;
         this.interpretationResult = interpretationResult;
+        this.dreamEmotion = dreamEmotion; // New field assignment
+        this.tags = tags; // New field assignment
         this.aiStyle = aiStyle;
         this.dreamSymbols = dreamSymbols;
         this.interpretedAt = interpretedAt;
