@@ -45,9 +45,9 @@ public class DreamEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private DreamEmotion dreamEmotion; // New field
+    private DreamEmotion dreamEmotion;
 
-    @Column(columnDefinition = "TEXT") // New field, nullable
+    @Column(columnDefinition = "TEXT")
     private String tags;
 
     @Enumerated(EnumType.STRING)
@@ -80,7 +80,7 @@ public class DreamEntity {
     @Builder
     private DreamEntity(Long id, Long userId,
         String dreamContent, String interpretationResult,
-        DreamEmotion dreamEmotion, String tags, // New fields
+        DreamEmotion dreamEmotion, String tags,
         AiStyle aiStyle, List<DreamSymbol> dreamSymbols,
         LocalDateTime interpretedAt, LocalDateTime createdAt, LocalDateTime updatedAt) {
 
@@ -88,8 +88,8 @@ public class DreamEntity {
         this.userId = userId;
         this.dreamContent = dreamContent;
         this.interpretationResult = interpretationResult;
-        this.dreamEmotion = dreamEmotion; // New field assignment
-        this.tags = tags; // New field assignment
+        this.dreamEmotion = dreamEmotion;
+        this.tags = tags;
         this.aiStyle = aiStyle;
         this.dreamSymbols = dreamSymbols;
         this.interpretedAt = interpretedAt;
