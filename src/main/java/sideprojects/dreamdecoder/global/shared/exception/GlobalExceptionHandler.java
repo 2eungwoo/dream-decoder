@@ -23,13 +23,6 @@ import sideprojects.dreamdecoder.global.shared.response.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableExceptionException(HttpMessageNotReadableException ex) {
-        ErrorCode errorCode = INVALID_INPUT_VALUE;
-        log.error("HttpMessageNotReadableException 발생: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.of(errorCode));
-    }
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         ErrorCode errorCode = INVALID_INPUT_VALUE;
