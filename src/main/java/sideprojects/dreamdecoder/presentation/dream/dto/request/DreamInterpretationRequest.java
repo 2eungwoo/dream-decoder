@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 @Getter
@@ -14,6 +15,9 @@ public class DreamInterpretationRequest {
 
     @NotBlank(message = "꿈 내용은 비워둘 수 없습니다.")
     private String dreamContent;
+
+    private DreamEmotion dreamEmotion;
+    private String tags;
 
     private AiStyle style;
 }

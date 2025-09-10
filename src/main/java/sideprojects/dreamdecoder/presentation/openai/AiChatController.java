@@ -29,7 +29,7 @@ public class AiChatController {
         @Valid @RequestBody DreamInterpretationRequest request) {
 
         DreamInterpretationResponse result = dreamInterpretationService.interpretDream(userId,
-            request.getDreamContent(), request.getStyle());
+            request.getDreamContent(), request.getDreamEmotion(), request.getTags(), request.getStyle());
         return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, result);
     }
 
