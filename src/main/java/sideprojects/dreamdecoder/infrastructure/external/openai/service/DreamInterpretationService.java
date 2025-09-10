@@ -8,6 +8,7 @@ import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
+import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobCommand;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
@@ -42,8 +43,16 @@ public class DreamInterpretationService {
         String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
             actualStyle, extractedTypes, dreamContent);
 
-        dreamSaveJobProducer.publishJob(userId, dreamContent, interpretation, dreamEmotion, tags,
-            actualStyle, extractedTypes);
+        DreamSaveJobCommand command = DreamSaveJobCommand.builder()
+                .userId(userId)
+                .dreamContent(dreamContent)
+                .interpretation(interpretation)
+                .dreamEmotion(dreamEmotion)
+                .tags(tags)
+                .style(actualStyle)
+                .types(extractedTypes)
+                .build();
+        dreamSaveJobProducer.publishJob(command);
 
         return DreamInterpretationResponse.of(interpretation, dreamEmotion, tags, actualStyle,
             extractedTypes);
