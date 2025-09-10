@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 public record FindOneDreamResponse(
@@ -11,6 +12,8 @@ public record FindOneDreamResponse(
     Long userId,
     String dreamContent,
     String interpretationResult,
+    DreamEmotion dreamEmotion,
+    String tags,
     AiStyle aiStyle,
     List<SymbolDto> symbols,
     LocalDateTime interpretedAt,
@@ -28,6 +31,8 @@ public record FindOneDreamResponse(
             dreamModel.getUserId(),
             dreamModel.getDreamContent(),
             dreamModel.getInterpretationResult(),
+            dreamModel.getDreamEmotion(),
+            dreamModel.getTags(),
             dreamModel.getAiStyle(),
             symbols,
             dreamModel.getInterpretedAt(),
