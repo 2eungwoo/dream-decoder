@@ -4,14 +4,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobCommand;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
-import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobCommand;
 import sideprojects.dreamdecoder.global.aop.UseSemaphore;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
 @Slf4j
@@ -21,7 +20,6 @@ public class DreamInterpretationService {
 
     private final DreamSymbolExtractorService dreamSymbolExtractorService;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
-    private final SemaphoreManager semaphoreManager;
     private final DreamSaveJobProducer dreamSaveJobProducer;
 
     @UseSemaphore
@@ -41,14 +39,14 @@ public class DreamInterpretationService {
             actualStyle, dreamEmotion, extractedTypes, dreamContent);
 
         DreamSaveJobCommand command = DreamSaveJobCommand.builder()
-                .userId(userId)
-                .dreamContent(dreamContent)
-                .interpretation(interpretation)
-                .dreamEmotion(dreamEmotion)
-                .tags(tags)
-                .style(actualStyle)
-                .types(extractedTypes)
-                .build();
+            .userId(userId)
+            .dreamContent(dreamContent)
+            .interpretation(interpretation)
+            .dreamEmotion(dreamEmotion)
+            .tags(tags)
+            .style(actualStyle)
+            .types(extractedTypes)
+            .build();
         dreamSaveJobProducer.publishJob(command);
 
         return DreamInterpretationResponse.of(interpretation, dreamEmotion, tags, actualStyle,
