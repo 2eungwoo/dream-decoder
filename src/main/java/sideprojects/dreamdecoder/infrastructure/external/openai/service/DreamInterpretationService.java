@@ -23,15 +23,11 @@ public class DreamInterpretationService {
     private final SemaphoreManager semaphoreManager;
     private final DreamSaveJobProducer dreamSaveJobProducer;
 
+    @UseSemaphore
     @PreventDuplicateRequest(key = "#userId")
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent,
         DreamEmotion dreamEmotion, String tags, AiStyle style) {
-        try {
-            semaphoreManager.acquireSemaphore();
-            return processDreamLogicAndPublishJob(userId, dreamContent, dreamEmotion, tags, style);
-        } finally {
-            semaphoreManager.releaseSemaphore();
-        }
+        return processDreamLogicAndPublishJob(userId, dreamContent, dreamEmotion, tags, style);
     }
 
     private DreamInterpretationResponse processDreamLogicAndPublishJob(Long userId,
