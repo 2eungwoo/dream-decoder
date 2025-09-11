@@ -9,6 +9,7 @@ import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobCommand;
+import sideprojects.dreamdecoder.global.aop.UseSemaphore;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.SemaphoreManager;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
