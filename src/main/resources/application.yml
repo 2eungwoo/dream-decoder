@@ -47,7 +47,7 @@ jwt:
   expiration: 3600000
 
 concurrency:
-  permits: 20 # AI 요청 동시 처리 허용량
+  permits: 200 # AI 요청 동시 처리 허용량 --> gpt-5-nano 기준 500RPM, 100000TPM을 고려한 수치(최대의 80%정도로 설정)
   duplicate-request-lock:
     key-prefix: "lock:ai-chat:user:"
     ttl: 3s

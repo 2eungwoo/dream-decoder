@@ -1,6 +1,7 @@
 package sideprojects.dreamdecoder.presentation.dream.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 public class DreamInterpretationRequest {
 
     @NotBlank(message = "꿈 내용은 비워둘 수 없습니다.")
+    @Size(max = 500, message = "꿈 내용은 최대 500자까지 입력할 수 있습니다.")
     private String dreamContent;
 
     private DreamEmotion dreamEmotion;
