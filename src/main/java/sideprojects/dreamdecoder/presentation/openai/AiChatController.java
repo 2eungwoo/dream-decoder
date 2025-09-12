@@ -7,13 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DummyService;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
-import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
+import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 
 
 @RestController
@@ -24,14 +25,19 @@ public class AiChatController {
     private final DummyService dummyDreamInterpretationService;
 
 
-    @PreventDuplicateRequest(key = "#userId")
     @PostMapping("/ai/chat")
+    @PreventDuplicateRequest(key = "#userId")
     public ResponseEntity<ApiResponse<DreamInterpretationResponse>> interpret(
-        @RequestParam Long userId,
-        @Valid @RequestBody DreamInterpretationRequest request) {
+            @RequestParam Long userId,
+            @Valid @RequestBody DreamInterpretationRequest request) {
 
-        DreamInterpretationResponse result = dreamInterpretationService.interpretDream(userId,
-            request.getDreamContent(), request.getDreamEmotion(), request.getTags(), request.getStyle());
+        DreamInterpretationResponse result = dreamInterpretationService.interpretDream(
+                userId,
+                request.getDreamContent(),
+                request.getDreamEmotion(),
+                request.getTags(),
+                request.getStyle()
+        );
         return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, result);
     }
 
