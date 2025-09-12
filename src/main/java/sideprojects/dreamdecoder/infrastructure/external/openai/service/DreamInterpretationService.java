@@ -8,7 +8,6 @@ import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobCommand;
 import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
-import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.global.aop.UseSemaphore;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
@@ -23,7 +22,6 @@ public class DreamInterpretationService {
     private final DreamSaveJobProducer dreamSaveJobProducer;
 
     @UseSemaphore
-    @PreventDuplicateRequest(key = "#userId")
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent,
         DreamEmotion dreamEmotion, String tags, AiStyle style) {
         return processDreamLogicAndPublishJob(userId, dreamContent, dreamEmotion, tags, style);

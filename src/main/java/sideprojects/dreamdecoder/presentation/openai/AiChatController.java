@@ -13,6 +13,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInt
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DummyService;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
+import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 
 
 @RestController
@@ -23,6 +24,7 @@ public class AiChatController {
     private final DummyService dummyDreamInterpretationService;
 
 
+    @PreventDuplicateRequest(key = "#userId")
     @PostMapping("/ai/chat")
     public ResponseEntity<ApiResponse<DreamInterpretationResponse>> interpret(
         @RequestParam Long userId,
