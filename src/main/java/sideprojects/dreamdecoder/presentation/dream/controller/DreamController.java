@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUseCase;
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindOneDreamUseCase;
-import sideprojects.dreamdecoder.application.dream.service.InterpretationCacheService;
+import sideprojects.dreamdecoder.application.dream.util.InterpretationCacheService;
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamApiRequest;

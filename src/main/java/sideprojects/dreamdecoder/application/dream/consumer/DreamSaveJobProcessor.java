@@ -11,6 +11,7 @@ import org.redisson.api.StreamMessageId;
 import org.springframework.stereotype.Component;
 import sideprojects.dreamdecoder.application.dream.service.DreamService;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
@@ -48,6 +49,7 @@ public class DreamSaveJobProcessor {
         return SaveDreamRequest.builder()
             .userId(Long.parseLong(message.get("userId")))
             .dreamContent(message.get("dreamContent"))
+            .dreamEmotion(DreamEmotion.valueOf(message.get("dreamEmotion")))
             .interpretationResult(message.get("interpretationResult"))
             .aiStyle(AiStyle.valueOf(message.get("aiStyle")))
             .dreamTypes(dreamTypes)

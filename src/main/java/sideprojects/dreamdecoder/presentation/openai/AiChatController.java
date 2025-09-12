@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sideprojects.dreamdecoder.application.dream.service.InterpretationCacheService;
+import sideprojects.dreamdecoder.application.dream.util.InterpretationCacheService;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;

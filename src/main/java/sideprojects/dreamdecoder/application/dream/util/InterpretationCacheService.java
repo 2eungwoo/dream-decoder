@@ -1,15 +1,16 @@
-package sideprojects.dreamdecoder.application.dream.service;
+package sideprojects.dreamdecoder.application.dream.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
+import sideprojects.dreamdecoder.application.dream.util.exception.NoCacheDataException;
+import sideprojects.dreamdecoder.application.dream.util.exception.CacheErrorCode;
+
 import java.time.Duration;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,8 +40,7 @@ public class InterpretationCacheService {
         Object cachedData = redisTemplate.opsForValue().get(cacheKey);
 
         if (cachedData == null) {
-            // TODO: 적절한 예외 처리 필요 (e.g., CustomException)
-            throw new IllegalArgumentException("유효하지 않거나 만료된 ID입니다.");
+            throw new NoCacheDataException(CacheErrorCode.CACHE_DATA_NOT_FOUND);
         }
 
         redisTemplate.delete(cacheKey);
