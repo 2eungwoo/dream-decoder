@@ -2,10 +2,11 @@ package sideprojects.dreamdecoder.application.dream.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
-import org.redisson.api.RedissonClient;
 import org.redisson.api.StreamMessageId;
 import org.springframework.stereotype.Component;
 import sideprojects.dreamdecoder.application.dream.service.DreamService;
@@ -13,9 +14,6 @@ import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
-
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -25,7 +23,8 @@ public class DreamSaveJobProcessor {
     private final DreamService dreamService;
     private final ObjectMapper objectMapper;
 
-    public void process(RStream<String, String> stream, String groupName, StreamMessageId messageId, Map<String, String> messageBody) {
+    public void process(RStream<String, String> stream, String groupName, StreamMessageId messageId,
+        Map<String, String> messageBody) {
         try {
             SaveDreamRequest request = buildRequestFromMessage(messageBody);
             DreamModel dreamModelToSave = DreamModel.createNewDream(request);
@@ -38,18 +37,20 @@ public class DreamSaveJobProcessor {
         }
     }
 
-    private SaveDreamRequest buildRequestFromMessage(Map<String, String> message) throws com.fasterxml.jackson.core.JsonProcessingException {
+    private SaveDreamRequest buildRequestFromMessage(Map<String, String> message)
+        throws com.fasterxml.jackson.core.JsonProcessingException {
         List<DreamType> dreamTypes = objectMapper.readValue(
-                message.get("dreamTypes"),
-                new TypeReference<>() {}
+            message.get("dreamTypes"),
+            new TypeReference<>() {
+            }
         );
 
         return SaveDreamRequest.builder()
-                .userId(Long.parseLong(message.get("userId")))
-                .dreamContent(message.get("dreamContent"))
-                .interpretationResult(message.get("interpretationResult"))
-                .aiStyle(AiStyle.valueOf(message.get("aiStyle")))
-                .dreamTypes(dreamTypes)
-                .build();
+            .userId(Long.parseLong(message.get("userId")))
+            .dreamContent(message.get("dreamContent"))
+            .interpretationResult(message.get("interpretationResult"))
+            .aiStyle(AiStyle.valueOf(message.get("aiStyle")))
+            .dreamTypes(dreamTypes)
+            .build();
     }
 }
