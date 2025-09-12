@@ -19,7 +19,6 @@ import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamResponseCode;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.FindAllDreamResponse;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.FindOneDreamResponse;
-import sideprojects.dreamdecoder.presentation.dream.dto.response.SaveDreamResponse;
 
 @RestController
 @RequestMapping("/api/dreams")
@@ -31,12 +30,9 @@ public class DreamController {
     private final FindOneDreamUseCase findOneDreamUseCase;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<SaveDreamResponse>> saveDream(
-        @RequestBody @Valid SaveDreamRequest request) {
-        DreamModel savedDreamModel = saveDreamUseCase.save(request);
-        SaveDreamResponse response = SaveDreamResponse.of(savedDreamModel);
-
-        return ApiResponse.success(DreamResponseCode.DREAM_SAVE_SUCCESS, response);
+    public ResponseEntity<ApiResponse<Void>> saveDream(@RequestBody @Valid SaveDreamRequest request) {
+        saveDreamUseCase.save(request);
+        return ApiResponse.success(DreamResponseCode.DREAM_SAVE_SUCCESS);
     }
 
     @GetMapping()

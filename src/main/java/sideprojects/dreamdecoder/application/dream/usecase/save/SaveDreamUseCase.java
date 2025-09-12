@@ -4,5 +4,5 @@ import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
 
 public interface SaveDreamUseCase {
-    DreamModel save(SaveDreamRequest request);
+    void save(SaveDreamRequest request);
 }
