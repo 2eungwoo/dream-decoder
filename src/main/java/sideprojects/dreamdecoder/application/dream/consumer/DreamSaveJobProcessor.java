@@ -2,33 +2,38 @@ package sideprojects.dreamdecoder.application.dream.consumer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
-import org.redisson.api.RedissonClient;
 import org.redisson.api.StreamMessageId;
 import org.springframework.stereotype.Component;
+<<<<<<< HEAD
 import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
+=======
+import sideprojects.dreamdecoder.application.dream.service.DreamService;
+import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
+>>>>>>> v2/save-seperated
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
-
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class DreamSaveJobProcessor {
 
-    private final SaveDreamUseCase saveDreamUseCase;
+    private final DreamService dreamService;
     private final ObjectMapper objectMapper;
 
-    public void process(RStream<String, String> stream, String groupName, StreamMessageId messageId, Map<String, String> messageBody) {
+    public void process(RStream<String, String> stream, String groupName, StreamMessageId messageId,
+        Map<String, String> messageBody) {
         try {
             SaveDreamRequest request = buildRequestFromMessage(messageBody);
-            saveDreamUseCase.save(request);
+            DreamModel dreamModelToSave = DreamModel.createNewDream(request);
+            dreamService.saveDream(dreamModelToSave);
             stream.ack(groupName, messageId); // 처리 성공 시 ACK
             log.info("꿈 해석 결과 DB 저장 및 ACK 성공 (메시지 ID: {})", messageId);
         } catch (Exception e) {
@@ -37,10 +42,12 @@ public class DreamSaveJobProcessor {
         }
     }
 
-    private SaveDreamRequest buildRequestFromMessage(Map<String, String> message) throws com.fasterxml.jackson.core.JsonProcessingException {
+    private SaveDreamRequest buildRequestFromMessage(Map<String, String> message)
+        throws com.fasterxml.jackson.core.JsonProcessingException {
         List<DreamType> dreamTypes = objectMapper.readValue(
-                message.get("dreamTypes"),
-                new TypeReference<>() {}
+            message.get("dreamTypes"),
+            new TypeReference<>() {
+            }
         );
 
         return SaveDreamRequest.builder()
