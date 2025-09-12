@@ -9,12 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
 import org.redisson.api.StreamMessageId;
 import org.springframework.stereotype.Component;
-<<<<<<< HEAD
-import sideprojects.dreamdecoder.application.dream.usecase.save.SaveDreamUseCase;
-=======
 import sideprojects.dreamdecoder.application.dream.service.DreamService;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
->>>>>>> v2/save-seperated
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class InterpretationCacheService {
 
     private static final String CACHE_KEY_PREFIX = "interpretation:cache:";
-    private static final Duration CACHE_TTL = Duration.ofMinutes(10);
+    private static final Duration CACHE_TTL = Duration.ofMinutes(2);
 
     private final RedisTemplate<String, Object> redisTemplate;
 
