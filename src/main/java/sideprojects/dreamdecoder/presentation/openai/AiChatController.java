@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sideprojects.dreamdecoder.application.dream.service.InterpretationCacheService;
 import sideprojects.dreamdecoder.global.aop.PreventDuplicateRequest;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
@@ -14,7 +15,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInt
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DummyService;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
-import sideprojects.dreamdecoder.application.dream.producer.DreamSaveJobProducer;
+import sideprojects.dreamdecoder.presentation.openai.dto.response.AiChatResponse;
 
 
 @RestController
@@ -23,22 +24,27 @@ public class AiChatController {
 
     private final DreamInterpretationService dreamInterpretationService;
     private final DummyService dummyDreamInterpretationService;
-
+    private final InterpretationCacheService interpretationCacheService;
 
     @PostMapping("/ai/chat")
-    @PreventDuplicateRequest(key = "#userId")
-    public ResponseEntity<ApiResponse<DreamInterpretationResponse>> interpret(
-            @RequestParam Long userId,
-            @Valid @RequestBody DreamInterpretationRequest request) {
+    @PreventDuplicateRequest(key = "#userId + ':' + #request.hashCode()")
+    public ResponseEntity<ApiResponse<AiChatResponse>> interpret(
+        @RequestParam Long userId,
+        @Valid @RequestBody DreamInterpretationRequest request) {
 
-        DreamInterpretationResponse result = dreamInterpretationService.interpretDream(
-                userId,
-                request.getDreamContent(),
-                request.getDreamEmotion(),
-                request.getTags(),
-                request.getStyle()
+        DreamInterpretationResponse interpretationResult = dreamInterpretationService.interpretDream(
+            userId,
+            request.getDreamContent(),
+            request.getDreamEmotion(),
+            request.getTags(),
+            request.getStyle()
         );
-        return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, result);
+
+        String interpretationId = interpretationCacheService.cacheInterpretation(request,
+            interpretationResult);
+
+        AiChatResponse response = new AiChatResponse(interpretationId, interpretationResult);
+        return ApiResponse.success(OpenAiResponseCode.AI_CHAT_SUCCESS, response);
     }
 
     /*
