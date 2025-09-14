@@ -20,11 +20,11 @@ public class CacheDataValidator {
         Optional<String> cachedInterpretation = cacheManager.get(userId, dreamContent, dreamEmotion, tags, style);
 
         if (cachedInterpretation.isPresent()) {
-            log.info("캐시에서 AI 해석 결과를 찾았습니다. (유저 ID: {})", userId);
+            log.info("캐시 HIT :  AI 해석 결과를 찾았습니다. (유저 ID: {})", userId);
             return cachedInterpretation.get();
         }
 
-        log.info("AI 서비스 요청 처리 시작 (유저 ID: {})", userId);
+        log.info("캐시 MISS : AI 서비스 요청 처리 시작 (유저 ID: {})", userId);
         String newInterpretation = generator.get();
         cacheManager.set(userId, dreamContent, dreamEmotion, tags, style, newInterpretation);
         log.info("AI 해석 결과를 캐시에 저장했습니다. (유저 ID: {})", userId);
