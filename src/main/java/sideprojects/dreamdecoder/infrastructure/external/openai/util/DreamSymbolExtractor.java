@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.infrastructure.external.openai.service;
+package sideprojects.dreamdecoder.infrastructure.external.openai.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.config.OpenAiClient;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.PromptGenerator;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DreamSymbolExtractorService {
+public class DreamSymbolExtractor {
 
     private final OpenAiClient openAiClient;
     private final ObjectMapper objectMapper;
