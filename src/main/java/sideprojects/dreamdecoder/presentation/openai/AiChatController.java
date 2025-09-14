@@ -3,6 +3,7 @@ package sideprojects.dreamdecoder.presentation.openai;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,7 @@ import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
 import sideprojects.dreamdecoder.infrastructure.external.openai.dto.response.OpenAiResponseCode;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DummyService;
+import sideprojects.dreamdecoder.infrastructure.security.CustomUserDetailsService;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 

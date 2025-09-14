@@ -1,6 +1,7 @@
 package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable; // Added import
 import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
@@ -16,6 +17,7 @@ public class DreamInterpretationGeneratorService {
 
     private final OpenAiClient openAiClient;
 
+    @Cacheable(value = "dreamInterpretations", keyGenerator = "dreamInterpretationKeyGenerator")
     public String generateInterpretation(AiStyle style, DreamEmotion dreamEmotion, List<DreamType> extractedTypes, String dreamContent) {
         String systemPrompt = PromptGenerator.generateInterpretationSystemPrompt(style, dreamEmotion, extractedTypes);
         return openAiClient.chat(systemPrompt, dreamContent);
