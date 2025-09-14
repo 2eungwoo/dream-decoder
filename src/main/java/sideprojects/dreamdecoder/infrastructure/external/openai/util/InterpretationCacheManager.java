@@ -8,7 +8,6 @@ import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -32,7 +31,11 @@ public class InterpretationCacheManager {
     }
 
     private String createCacheKey(Long userId, String dreamContent, DreamEmotion dreamEmotion, String tags, AiStyle style) {
-        int hashCode = Objects.hash(userId, dreamContent, dreamEmotion, tags, style);
-        return CACHE_KEY_PREFIX + hashCode;
+        // Key의 가독성과 디버깅 용이성을 위해 파라미터를 조합하고, 가변 길이의 내용은 hashCode 사용
+        return CACHE_KEY_PREFIX + userId + ":" +
+                dreamEmotion.name() + ":" +
+                style.name() + ":" +
+                tags.hashCode() + ":" +
+                dreamContent.hashCode();
     }
 }
