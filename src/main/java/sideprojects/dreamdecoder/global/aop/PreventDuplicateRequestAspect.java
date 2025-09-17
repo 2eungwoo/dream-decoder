@@ -6,7 +6,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -17,6 +18,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.O
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
@@ -24,7 +26,7 @@ import java.time.Duration;
 @Slf4j
 public class PreventDuplicateRequestAspect {
 
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedissonClient redissonClient;
     private final DuplicateRequestLockProperties lockProperties;
 
     @Around("@annotation(preventDuplicateRequest)")
@@ -32,16 +34,24 @@ public class PreventDuplicateRequestAspect {
         String dynamicKey = createDynamicKey(joinPoint, preventDuplicateRequest.key());
         String lockKey = lockProperties.getKeyPrefix() + dynamicKey;
         Duration ttl = lockProperties.getTtl();
+        RLock lock = redissonClient.getLock(lockKey);
 
-        Boolean acquired = redisTemplate.opsForValue().setIfAbsent(lockKey, "locked", ttl);
+        boolean acquired = lock.tryLock(0, ttl.toSeconds(), TimeUnit.SECONDS);
 
-        if (Boolean.FALSE.equals(acquired)) {
+        if (!acquired) {
             log.warn("중복 요청이 감지되었습니다. Key: {}", lockKey);
             throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
         }
 
         log.info("락 획득 성공. Key: {}", lockKey);
-        return joinPoint.proceed();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+                log.info("락 해제 성공. Key: {}", lockKey);
+            }
+        }
     }
 
     private String createDynamicKey(ProceedingJoinPoint joinPoint, String keyExpression) {
