@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import sideprojects.dreamdecoder.presentation.openai.limiter.exception.UsageLimitErrorCode;
 import sideprojects.dreamdecoder.presentation.openai.limiter.exception.UsageLimitExceededException;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class UsageLimitAspect {
             throw new UsageLimitExceededException(UsageLimitErrorCode.USAGE_LIMIT_EXCEEDED);
         }
 
+        log.info("============= Usage limit check: userId: {}, count: {}", userId, count);
         return joinPoint.proceed();
     }
 }
