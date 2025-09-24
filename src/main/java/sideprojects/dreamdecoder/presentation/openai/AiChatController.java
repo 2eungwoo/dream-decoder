@@ -16,6 +16,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.service.DummySer
 import sideprojects.dreamdecoder.infrastructure.security.CustomUserDetailsService;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.DreamInterpretationRequest;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
+import sideprojects.dreamdecoder.presentation.openai.limiter.aop.UsageLimitCheck;
 
 
 @RestController
@@ -26,6 +27,7 @@ public class AiChatController {
     private final DummyService dummyDreamInterpretationService;
 
     @PostMapping("/ai/chat")
+    @UsageLimitCheck
     @PreventDuplicateRequest(key = "#userId + ':' + #request.hashCode()")
     public ResponseEntity<ApiResponse<DreamInterpretationResponse>> interpret(
         @RequestParam Long userId,
