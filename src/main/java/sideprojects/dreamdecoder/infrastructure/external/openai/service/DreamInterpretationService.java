@@ -1,7 +1,6 @@
 package sideprojects.dreamdecoder.infrastructure.external.openai.service;
 
 import java.util.List;
-import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.global.aop.UseSemaphore;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
-import sideprojects.dreamdecoder.infrastructure.external.openai.util.CacheDataValidator;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.DreamSymbolExtractor;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 
@@ -23,7 +21,6 @@ public class DreamInterpretationService {
     private final DreamSymbolExtractor dreamSymbolExtractor;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
     private final DreamSaveJobProducer dreamSaveJobProducer;
-    private final CacheDataValidator cacheDataValidator;
 
     @UseSemaphore
     public DreamInterpretationResponse interpretDream(Long userId, String dreamContent,
@@ -33,12 +30,8 @@ public class DreamInterpretationService {
         List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(dreamContent);
 
         // OpenAI 호출
-        Supplier<String> interpretationGenerator = () -> dreamInterpretationGeneratorService.generateInterpretation(
+        String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
             actualStyle, dreamEmotion, extractedTypes, dreamContent);
-
-        // 캐시 히트or미스 확인 , 미스->생성
-        String interpretation = cacheDataValidator.getOrGenerate(
-            userId, dreamContent, dreamEmotion, tags, actualStyle, interpretationGenerator);
 
         // DB 저장 ->  Redis Stream에 발행
         DreamSaveJobCommand command = DreamSaveJobCommand.builder()
