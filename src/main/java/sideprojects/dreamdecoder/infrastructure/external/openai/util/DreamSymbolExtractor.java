@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.cache.annotation.Cacheable;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class DreamSymbolExtractor {
     private final OpenAiClient openAiClient;
     private final ObjectMapper objectMapper;
 
+    @Cacheable("dreamSymbols")
     public List<DreamType> extractSymbols(String dreamContent) {
         List<String> allTypeNames = Stream.of(DreamType.values())
                 .map(Enum::name)

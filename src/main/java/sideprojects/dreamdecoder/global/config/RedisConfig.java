@@ -10,6 +10,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.RedissonSpringCacheManager;
+import org.redisson.spring.data.connection.RedissonConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -42,6 +43,11 @@ public class RedisConfig {
     }
 
     @Bean
+    public RedisConnectionFactory redissonConnectionFactory(RedissonClient redissonClient) {
+        return new RedissonConnectionFactory(redissonClient);
+    }
+
+    @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
@@ -54,17 +60,13 @@ public class RedisConfig {
     public CacheManager cacheManager(RedissonClient redissonClient) {
         Map<String, CacheConfig> config = new HashMap<>();
         config.put("dreamInterpretations", new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
+        config.put("dreamSymbols", new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
         return new RedissonSpringCacheManager(redissonClient, config);
     }
 
     @Bean("dreamInterpretationKeyGenerator")
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
-            // params[0]: AiStyle style
-            // params[1]: DreamEmotion dreamEmotion
-            // params[2]: List<DreamType> extractedTypes
-            // params[3]: String dreamContent
-
             AiStyle style = (AiStyle) params[0];
             DreamEmotion emotion = (DreamEmotion) params[1];
             List<DreamType> types = (List<DreamType>) params[2];
