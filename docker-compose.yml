@@ -6,7 +6,7 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
-    command: redis-server --save 60 1 --loglevel warning
+    command: redis-server --save 60 1 --loglevel warning --maxmemory 128mb --maxmemory-policy volatile-lfu
 
   redis-exporter:
     image: oliver006/redis_exporter:latest
