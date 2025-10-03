@@ -15,6 +15,7 @@ import sideprojects.dreamdecoder.application.dream.usecase.find.FindAllDreamsUse
 import sideprojects.dreamdecoder.application.dream.usecase.find.FindOneDreamUseCase;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.global.shared.response.ApiResponse;
+import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamInterpretationResponse;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.DreamResponseCode;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.FindAllDreamResponse;
 import sideprojects.dreamdecoder.presentation.dream.dto.response.FindOneDreamResponse;
@@ -39,10 +40,10 @@ public class DreamController {
     }
 
     @GetMapping("/{dreamId}")
-    public ResponseEntity<ApiResponse<FindOneDreamResponse>> findOneDream(
+    public ResponseEntity<ApiResponse<DreamInterpretationResponse>> findOneDream(
         @PathVariable Long dreamId) {
         DreamModel dreamModel = findOneDreamUseCase.findById(dreamId);
-        FindOneDreamResponse response = FindOneDreamResponse.of(dreamModel);
+        DreamInterpretationResponse response = DreamInterpretationResponse.of(dreamModel);
 
         return ApiResponse.success(DreamResponseCode.DREAM_FOUND_SUCCESS, response);
     }
