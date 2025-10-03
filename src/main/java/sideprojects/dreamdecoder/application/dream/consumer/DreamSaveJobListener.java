@@ -9,7 +9,9 @@ import org.redisson.api.RedissonClient;
 import org.redisson.api.StreamMessageId;
 import org.redisson.api.stream.StreamCreateGroupArgs;
 import org.springframework.stereotype.Component;
+import sideprojects.dreamdecoder.global.config.RedisStreamProperties;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,29 +20,30 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class DreamSaveJobListener {
 
-    private static final String STREAM_KEY = "dream:save:jobs";
-    private static final String CONSUMER_GROUP = "dream-savers";
-    private static final String CONSUMER_NAME = "consumer-" + java.util.UUID.randomUUID();
-
     private final RedissonClient redissonClient;
     private final DreamSaveJobPoller jobPoller;
+    private final RedisStreamProperties redisStreamProperties;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private String consumerName;
 
     @PostConstruct
     public void startListener() {
+        this.consumerName = redisStreamProperties.getConsumerPrefix() + UUID.randomUUID();
         setupStreamAndGroup();
         executorService.submit(this::runPollingLoop);
-        log.info("DreamSaveJobListener 시작. 컨슈머 이름: {}", CONSUMER_NAME);
+        log.info("DreamSaveJobListener 시작. 컨슈머 이름: {}", consumerName);
     }
 
     private void setupStreamAndGroup() {
-        RStream<String, String> stream = redissonClient.getStream(STREAM_KEY);
+        String streamKey = redisStreamProperties.getKey();
+        String groupName = redisStreamProperties.getGroup();
+        RStream<String, String> stream = redissonClient.getStream(streamKey);
         try {
-            stream.createGroup(StreamCreateGroupArgs.name(CONSUMER_GROUP).id(new StreamMessageId(0, 0)).makeStream());
-            log.info("Redis Stream 컨슈머 그룹 생성 완료. 그룹: {}, 스트림 키: {}", CONSUMER_GROUP, STREAM_KEY);
+            stream.createGroup(StreamCreateGroupArgs.name(groupName).id(new StreamMessageId(0, 0)).makeStream());
+            log.info("Redis Stream 컨슈머 그룹 생성 완료. 그룹: {}, 스트림 키: {}", groupName, streamKey);
         } catch (org.redisson.client.RedisException e) {
             if (e.getMessage().contains("BUSYGROUP")) {
-                log.info("컨슈머 그룹이 이미 존재합니다: {}", CONSUMER_GROUP);
+                log.info("컨슈머 그룹이 이미 존재합니다: {}", groupName);
             } else {
                 throw e;
             }
@@ -48,9 +51,11 @@ public class DreamSaveJobListener {
     }
 
     private void runPollingLoop() {
-        RStream<String, String> stream = redissonClient.getStream(STREAM_KEY);
+        String streamKey = redisStreamProperties.getKey();
+        String groupName = redisStreamProperties.getGroup();
+        RStream<String, String> stream = redissonClient.getStream(streamKey);
         while (!Thread.currentThread().isInterrupted()) {
-            jobPoller.poll(stream, CONSUMER_GROUP, CONSUMER_NAME);
+            jobPoller.poll(stream, groupName, consumerName);
         }
     }
 
