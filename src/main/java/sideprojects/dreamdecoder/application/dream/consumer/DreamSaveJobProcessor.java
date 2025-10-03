@@ -1,9 +1,5 @@
 package sideprojects.dreamdecoder.application.dream.consumer;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
@@ -14,7 +10,12 @@ import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
+import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationGeneratorService;
+import sideprojects.dreamdecoder.infrastructure.external.openai.util.DreamSymbolExtractor;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -22,15 +23,35 @@ import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest
 public class DreamSaveJobProcessor {
 
     private final DreamService dreamService;
-    private final ObjectMapper objectMapper;
+    private final DreamSymbolExtractor dreamSymbolExtractor;
+    private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
+
+    private record DreamJobPayload(Long userId, String dreamContent, DreamEmotion dreamEmotion, AiStyle style, String tags) {
+        public static DreamJobPayload fromMessage(Map<String, String> messageBody) {
+            return new DreamJobPayload(
+                    Long.parseLong(messageBody.get("userId")),
+                    messageBody.get("dreamContent"),
+                    DreamEmotion.valueOf(messageBody.get("dreamEmotion")),
+                    AiStyle.valueOf(messageBody.get("style")),
+                    messageBody.get("tags")
+            );
+        }
+    }
 
     public void process(RStream<String, String> stream, String groupName, StreamMessageId messageId,
-        Map<String, String> messageBody) {
+                        Map<String, String> messageBody) {
         try {
-            SaveDreamRequest request = buildRequestFromMessage(messageBody);
-            DreamModel dreamModelToSave = DreamModel.createNewDream(request);
+            DreamJobPayload payload = DreamJobPayload.fromMessage(messageBody);
+
+            List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(payload.dreamContent());
+            String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
+                    payload.style(), payload.dreamEmotion(), extractedTypes, payload.dreamContent());
+
+            DreamModel dreamModelToSave = createDreamModel(payload, interpretation, extractedTypes);
             dreamService.saveDream(dreamModelToSave);
-            stream.ack(groupName, messageId); // 처리 성공 시 ACK
+
+            // 처리 성공 시 ACK
+            stream.ack(groupName, messageId);
             log.info("꿈 해석 결과 DB 저장 및 ACK 성공 (메시지 ID: {})", messageId);
         } catch (Exception e) {
             log.error("메시지 처리 중 오류 발생 (메시지 ID: {}), ACK하지 않음. 나중에 재처리됩니다.", messageId, e);
@@ -38,21 +59,16 @@ public class DreamSaveJobProcessor {
         }
     }
 
-    private SaveDreamRequest buildRequestFromMessage(Map<String, String> message)
-        throws com.fasterxml.jackson.core.JsonProcessingException {
-        List<DreamType> dreamTypes = objectMapper.readValue(
-            message.get("dreamTypes"),
-            new TypeReference<>() {
-            }
-        );
-
-        return SaveDreamRequest.builder()
-                .userId(Long.parseLong(message.get("userId")))
-                .dreamContent(message.get("dreamContent"))
-                .interpretationResult(message.get("interpretationResult"))
-                .dreamEmotion(DreamEmotion.valueOf(message.get("dreamEmotion")))
-                .aiStyle(AiStyle.valueOf(message.get("aiStyle")))
-                .dreamTypes(dreamTypes)
+    private DreamModel createDreamModel(DreamJobPayload payload, String interpretation, List<DreamType> extractedTypes) {
+        SaveDreamRequest request = SaveDreamRequest.builder()
+                .userId(payload.userId())
+                .dreamContent(payload.dreamContent())
+                .interpretationResult(interpretation)
+                .dreamEmotion(payload.dreamEmotion())
+                .aiStyle(payload.style())
+                .dreamTypes(extractedTypes)
+                .tags(payload.tags())
                 .build();
+        return DreamModel.createNewDream(request);
     }
 }
