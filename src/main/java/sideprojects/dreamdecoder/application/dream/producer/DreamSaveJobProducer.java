@@ -7,6 +7,7 @@ import org.redisson.api.RStream;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.stream.StreamAddArgs;
 import org.springframework.stereotype.Component;
+import sideprojects.dreamdecoder.global.config.RedisStreamProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +17,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DreamSaveJobProducer {
 
-    private static final String STREAM_KEY = "dream:save:jobs";
-
     private final RedissonClient redissonClient;
+    private final RedisStreamProperties redisStreamProperties;
 
     public void publishJob(DreamSaveJobCommand command) {
+        String streamKey = redisStreamProperties.getKey();
         try {
-            RStream<String, String> stream = redissonClient.getStream(STREAM_KEY);
+            RStream<String, String> stream = redissonClient.getStream(streamKey);
 
             // interpretation, types는 비동기 처리 이후 생성 -> 초기 발행 시 미포함
             Map<String, String> messageBody = new HashMap<>();
@@ -33,7 +34,7 @@ public class DreamSaveJobProducer {
             messageBody.put("style", command.style().name());
 
             stream.add(StreamAddArgs.entries(messageBody));
-            log.info("Redis Stream 메시지 발행 성공 (스트림 키: {})", STREAM_KEY);
+            log.info("Redis Stream 메시지 발행 성공 (스트림 키: {})", streamKey);
         } catch (Exception e) {
             log.error("Redis Stream 메시지 발행 중 오류 발생 (유저 ID: {})", command.userId(), e);
             // TODO: 메시지 발행 실패에 대한 강력한 예외 처리 또는 알림 로직 추가 예정

@@ -16,7 +16,7 @@ spring:
       host: localhost
       port: 6379
       stream:
-        key: dream-save-jobs
+        key: dream:save:jobs
         group: dream-savers
         consumer-prefix: consumer-
 
