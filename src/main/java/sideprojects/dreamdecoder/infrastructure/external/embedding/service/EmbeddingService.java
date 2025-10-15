@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import sideprojects.dreamdecoder.global.config.WebClientConfig;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingResponse;
 
 import java.util.Collections;
@@ -15,7 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EmbeddingService {
 
-    private final WebClientConfig webClient;
+    private final WebClient webClient;
 
     @Value("${embedding.server.url}")
     private String embeddingServerUrl;
