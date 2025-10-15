@@ -4,9 +4,11 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-# 라이브러리 설치 (PyTorch CPU 버전을 명시하면 용량 최적화할수있다고 함)
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# dependencies 설치
 RUN pip install --no-cache-dir -r requirements.txt
+
+# torch 버전을 강제 업그레이드 (sentence-transformers가 낮은 버전 설치하는 경우 대비)
+RUN pip install --no-cache-dir --upgrade "torch>=2.6.0"
 
 COPY . .
 
