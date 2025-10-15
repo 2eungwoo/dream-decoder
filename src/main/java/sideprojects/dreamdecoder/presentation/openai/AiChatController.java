@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sideprojects.dreamdecoder.application.dream.service.DreamAnalysisRequestService;
@@ -23,12 +24,13 @@ public class AiChatController {
 
     @PostMapping("/ai/chat")
     @UsageLimitCheck
-    @PreventDuplicateRequest(key = "#userId + ':' + #request.hashCode()")
+    @PreventDuplicateRequest(key = "#userId + ':' + #idempotencyKey")
     public ResponseEntity<ApiResponse<String>> interpret(
             @RequestParam Long userId,
+            @RequestHeader("Idempotency-Key") String idempotencyKey,
             @Valid @RequestBody DreamInterpretationRequest request) {
 
-        dreamAnalysisRequestService.requestAnalysis(userId, request);
+        dreamAnalysisRequestService.requestAnalysis(userId, idempotencyKey, request);
 
         return ApiResponse.success(OpenAiResponseCode.AI_CHAT_REQUEST_SUCCESS, "해몽 분석 요청이 성공적으로 접수되었습니다. 잠시 후 확인해주세요.");
     }
