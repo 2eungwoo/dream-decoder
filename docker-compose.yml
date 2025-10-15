@@ -40,5 +40,12 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
+  embedding-server:
+    build: ./embedding-server
+    container_name: embedding-server
+    ports:
+      - "8000:8000"
+    restart: always
+
 volumes:
   grafana-storage:
