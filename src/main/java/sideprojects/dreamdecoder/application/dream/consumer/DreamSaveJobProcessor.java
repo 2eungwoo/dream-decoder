@@ -9,6 +9,8 @@ import sideprojects.dreamdecoder.application.dream.service.DreamService;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
+import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingResponse;
+import sideprojects.dreamdecoder.infrastructure.external.embedding.service.EmbeddingService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationGeneratorService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.DreamSymbolExtractor;
@@ -25,6 +27,7 @@ public class DreamSaveJobProcessor {
     private final DreamService dreamService;
     private final DreamSymbolExtractor dreamSymbolExtractor;
     private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
+    private final EmbeddingService embeddingService;
 
     private record DreamJobPayload(Long userId, String dreamContent, DreamEmotion dreamEmotion, AiStyle style, String tags) {
         public static DreamJobPayload fromMessage(Map<String, String> messageBody) {
@@ -42,6 +45,11 @@ public class DreamSaveJobProcessor {
                         Map<String, String> messageBody) {
         try {
             DreamJobPayload payload = DreamJobPayload.fromMessage(messageBody);
+
+            // 벡터 생성 로직 추가
+            log.info("[Vector-DEBUG] 임베딩 생성 시작: {}", payload.dreamContent());
+            EmbeddingResponse embeddingResponse = embeddingService.createEmbedding(payload.dreamContent()).block();
+            log.info("[Vector-DEBUG] 생성된 벡터(일부): {}", embeddingResponse.getVector().subList(0, 5));
 
             List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(payload.dreamContent());
             String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
