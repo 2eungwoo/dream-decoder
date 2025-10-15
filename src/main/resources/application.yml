@@ -57,4 +57,8 @@ concurrency:
     ttl: 3s
   semaphore:
     key: "semaphore:ai-chat"
-    wait-time-seconds: 5\nembedding:\n  server:\n    url: http://embedding-server:8000
+    wait-time-seconds: 5
+
+embedding:
+  server:
+    url: http://embedding-server:8000

@@ -47,11 +47,11 @@ public class DreamSaveJobProcessor {
             DreamJobPayload payload = DreamJobPayload.fromMessage(messageBody);
 
             // 벡터 생성 로직 추가
-            log.info("[Vector-DEBUG] 임베딩 생성 시작: {}", payload.dreamContent());
+            log.info("[Vector-DEBUG] 임베딩 생성 시작, payload.dreamContent: {}", payload.dreamContent());
             EmbeddingResponse embeddingResponse = embeddingService.createEmbedding(payload.dreamContent()).block();
 
             if (embeddingResponse != null && embeddingResponse.getVector() != null) {
-                log.info("[Vector-DEBUG] 생성된 벡터(일부): {}", embeddingResponse.getVector().subList(0, 5));
+                log.info("[Vector-DEBUG] 생성된 벡터(0~5까지만): {}", embeddingResponse.getVector().subList(0, 5));
             } else {
                 log.warn("[Vector-DEBUG] 임베딩 생성 실패");
             }
