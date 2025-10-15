@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
+import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -19,6 +20,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.O
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
 
 @Aspect
 @Component
@@ -31,27 +33,26 @@ public class PreventDuplicateRequestAspect {
 
     @Around("@annotation(preventDuplicateRequest)")
     public Object preventDuplicateRequest(ProceedingJoinPoint joinPoint, PreventDuplicateRequest preventDuplicateRequest) throws Throwable {
+        log.info("===== [AOP] PreventDuplicateRequestAspect 시작 =====");
         String dynamicKey = createDynamicKey(joinPoint, preventDuplicateRequest.key());
         String lockKey = lockProperties.getKeyPrefix() + dynamicKey;
+        log.info("[AOP] 생성된 중복 방지 키: {}", lockKey);
+
         Duration ttl = lockProperties.getTtl();
-        RLock lock = redissonClient.getLock(lockKey);
+        RBucket<String> bucket = redissonClient.getBucket(lockKey);
 
-        boolean acquired = lock.tryLock(0, ttl.toSeconds(), TimeUnit.SECONDS);
+        // SET if Not Exists, with TTL
+        log.info("[AOP] 중복 방지 키 설정 시도... (TTL: {}초)", ttl.toSeconds());
+        boolean set = bucket.trySet("locked", ttl.toSeconds(), TimeUnit.SECONDS);
+        log.info("[AOP] 키 설정 결과: {}", set);
 
-        if (!acquired) {
-            log.warn("중복 요청이 감지되었습니다. Key: {}", lockKey);
+        if (!set) {
+            log.warn("[AOP] 키가 이미 존재함. 중복 요청으로 판단. Key: {}", lockKey);
             throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
         }
 
-        log.info("락 획득 성공. Key: {}", lockKey);
-        try {
-            return joinPoint.proceed();
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-                log.info("락 해제 성공. Key: {}", lockKey);
-            }
-        }
+        log.info("[AOP] 키 설정 성공. 비즈니스 로직 실행. Key: {}", lockKey);
+        return joinPoint.proceed();
     }
 
     private String createDynamicKey(ProceedingJoinPoint joinPoint, String keyExpression) {
@@ -60,6 +61,10 @@ public class PreventDuplicateRequestAspect {
         String[] parameterNames = signature.getParameterNames();
         Object[] args = joinPoint.getArgs();
 
+        log.debug("[AOP-DEBUG] SpEL: {}", keyExpression);
+        log.debug("[AOP-DEBUG] 메소드 파라미터 이름s: {}", Arrays.toString(parameterNames));
+        log.debug("[AOP-DEBUG] 메소드 인자: {}", Arrays.toString(args));
+
         ExpressionParser parser = new SpelExpressionParser();
         StandardEvaluationContext context = new StandardEvaluationContext();
 
@@ -67,6 +72,8 @@ public class PreventDuplicateRequestAspect {
             context.setVariable(parameterNames[i], args[i]);
         }
 
-        return String.valueOf(parser.parseExpression(keyExpression).getValue(context));
+        String resultKey = String.valueOf(parser.parseExpression(keyExpression).getValue(context));
+        log.debug("[AOP-DEBUG] Key: {}", resultKey);
+        return resultKey;
     }
 }
