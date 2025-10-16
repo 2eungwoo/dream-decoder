@@ -1,6 +1,6 @@
 from qdrant_client import QdrantClient, models
 from typing import List, Optional
-from .config import QDRANT_HOST, QDRANT_PORT, COLLECTION_NAME, VECTOR_SIZE, DISTANCE_METRIC
+from config import QDRANT_HOST, QDRANT_PORT, COLLECTION_NAME, VECTOR_SIZE, DISTANCE_METRIC
 
 # 클라이언트 초기화
 _client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)

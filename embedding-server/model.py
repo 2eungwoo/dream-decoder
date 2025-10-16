@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from .config import MODEL_NAME
+from config import MODEL_NAME
 from typing import List
 
 # 모듈 임포트 시 모델을 한 번만 로드함

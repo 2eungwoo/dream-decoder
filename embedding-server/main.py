@@ -2,8 +2,9 @@ import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from . import model, vector_db
-from .config import SIMILARITY_THRESHOLD
+import model
+import vector_db
+from config import SIMILARITY_THRESHOLD
 
 # --- FastAPI 앱 초기화 ---
 app = FastAPI()

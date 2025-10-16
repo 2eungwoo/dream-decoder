@@ -29,7 +29,7 @@ public class EmbeddingService {
                 .bodyToMono(EmbeddingSearchResponse.class);
     }
 
-    public Mono<Void> addDreamVector(long dreamId, String text) {
+    public Mono<String> addDreamVector(long dreamId, String text) {
         String endpoint = embeddingServerUrl + "/add";
         EmbeddingAddRequest requestBody = new EmbeddingAddRequest(dreamId, text);
 
@@ -37,6 +37,6 @@ public class EmbeddingService {
                 .uri(endpoint)
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .bodyToMono(String.class);
     }
 }
