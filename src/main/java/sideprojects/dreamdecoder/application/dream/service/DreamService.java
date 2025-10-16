@@ -16,7 +16,6 @@ import sideprojects.dreamdecoder.infrastructure.persistence.dream.DreamRepositor
 public class DreamService {
 
     private final DreamRepositoryImpl repositoryImpl;
-    private final DreamRepositoryImpl dreamRepositoryImpl;
 
     @Transactional
     public DreamModel saveDream(DreamModel dreamModel) {
@@ -30,7 +29,7 @@ public class DreamService {
 
     @Transactional(readOnly = true)
     public DreamModel findDreamById(Long dreamId) {
-        return dreamRepositoryImpl.findById(dreamId);
+        return repositoryImpl.findById(dreamId);
     }
 
 //    @Transactional
