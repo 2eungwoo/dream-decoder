@@ -3,3 +3,4 @@ safetensors>=0.4.3
 sentence-transformers
 fastapi
 uvicorn[standard]
+qdrant-client>=1.9.0

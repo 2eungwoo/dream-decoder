@@ -43,9 +43,21 @@ services:
   embedding-server:
     build: ./embedding-server
     container_name: embedding-server
+    depends_on:
+      - qdrant
     ports:
       - "8000:8000"
     restart: always
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-storage:/qdrant/storage
+
 volumes:
   grafana-storage:
+  qdrant-storage:
