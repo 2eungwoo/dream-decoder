@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingAddRequest;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingSearchRequest;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingSearchResponse;
+import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 @Service
 @RequiredArgsConstructor
@@ -18,9 +20,9 @@ public class EmbeddingService {
     @Value("${embedding.server.url}")
     private String embeddingServerUrl;
 
-    public Mono<EmbeddingSearchResponse> searchSimilarDream(String text) {
+    public Mono<EmbeddingSearchResponse> searchSimilarDream(String text, AiStyle style, DreamEmotion emotion) {
         String endpoint = embeddingServerUrl + "/search";
-        EmbeddingSearchRequest requestBody = new EmbeddingSearchRequest(text);
+        EmbeddingSearchRequest requestBody = new EmbeddingSearchRequest(text, style.name(), emotion.name());
 
         return webClient.post()
                 .uri(endpoint)
@@ -29,9 +31,9 @@ public class EmbeddingService {
                 .bodyToMono(EmbeddingSearchResponse.class);
     }
 
-    public Mono<String> addDreamVector(long dreamId, String text) {
+    public Mono<String> addDreamVector(long dreamId, String text, AiStyle style, DreamEmotion emotion) {
         String endpoint = embeddingServerUrl + "/add";
-        EmbeddingAddRequest requestBody = new EmbeddingAddRequest(dreamId, text);
+        EmbeddingAddRequest requestBody = new EmbeddingAddRequest(dreamId, text, style.name(), emotion.name());
 
         return webClient.post()
                 .uri(endpoint)

@@ -7,4 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class EmbeddingSearchRequest {
     private String text;
+    private String style;
+    private String emotion;
 }

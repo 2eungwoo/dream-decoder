@@ -76,7 +76,9 @@ public class DreamSaveJobProcessor {
      */
     private boolean handleVectorCacheHit(DreamJobPayload payload) {
         log.info("[L2 캐시 확인] 사용자 ID: {}의 꿈 내용으로 유사 꿈 검색 시작함", payload.userId());
-        EmbeddingSearchResponse searchResponse = embeddingService.searchSimilarDream(payload.dreamContent()).block();
+        EmbeddingSearchResponse searchResponse = embeddingService.searchSimilarDream(
+                payload.dreamContent(), payload.style(), payload.dreamEmotion()
+        ).block();
 
         if (searchResponse == null || !searchResponse.hasResult()) {
             return false; // 캐시 미스
@@ -116,7 +118,12 @@ public class DreamSaveJobProcessor {
      */
     private void writeToVectorCache(DreamModel savedDream) {
         log.info("[L2 캐시 쓰기] 새 꿈 ID: {}를 벡터 DB에 추가함", savedDream.getId());
-        embeddingService.addDreamVector(savedDream.getId(), savedDream.getDreamContent())
+        embeddingService.addDreamVector(
+                        savedDream.getId(),
+                        savedDream.getDreamContent(),
+                        savedDream.getAiStyle(),
+                        savedDream.getDreamEmotion()
+                )
                 .subscribeOn(Schedulers.boundedElastic()) // 비동기 실행을 위해 스케줄러 지정
                 .subscribe(
                         responseMessage -> log.info("[L2 캐시 쓰기 성공] 응답: {}", responseMessage), // onNext

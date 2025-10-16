@@ -11,4 +11,6 @@ public class EmbeddingAddRequest {
     @JsonProperty("dream_id")
     private long dreamId;
     private String text;
+    private String style;
+    private String emotion;
 }
