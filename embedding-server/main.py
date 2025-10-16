@@ -13,9 +13,13 @@ app = FastAPI()
 class AddRequest(BaseModel):
     dream_id: int = Field(..., description="꿈의 고유 식별자")
     text: str = Field(..., description="벡터화하여 저장할 꿈의 내용")
+    style: str = Field(..., description="응답 스타일 (MBTI)")
+    emotion: str = Field(..., description="꿈에 대한 감정")
 
 class SearchRequest(BaseModel):
     text: str = Field(..., description="유사한 항목을 검색할 꿈의 내용")
+    style: str = Field(..., description="응답 스타일 (MBTI)")
+    emotion: str = Field(..., description="꿈에 대한 감정")
 
 class SearchResponse(BaseModel):
     dream_id: int | None = Field(None, description="찾은 가장 유사한 꿈의 ID")
@@ -30,16 +34,25 @@ def startup_event():
 # --- API 엔드포인트 ---
 @app.post("/add", status_code=201)
 def add_dream_vector(request: AddRequest):
-    """꿈 텍스트를 인코딩하고 벡터 데이터베이스에 추가함"""
+    """꿈 텍스트를 인코딩하고 벡터 데이터베이스에 메타데이터와 함께 추가함"""
     vector = model.encode_text(request.text)
-    vector_db.add_vector(dream_id=request.dream_id, vector=vector)
+    vector_db.add_vector(
+        dream_id=request.dream_id,
+        vector=vector,
+        style=request.style,
+        emotion=request.emotion
+    )
     return {"message": f"Dream with ID {request.dream_id} added successfully."}
 
 @app.post("/search", response_model=SearchResponse)
 def search_similar_dreams(request: SearchRequest):
-    """꿈 텍스트를 인코딩하고 유사한 꿈을 검색함"""
+    """꿈 텍스트를 인코딩하고, 스타일과 감정으로 필터링하여 유사한 꿈을 검색함"""
     query_vector = model.encode_text(request.text)
-    top_hit = vector_db.search_vector(query_vector)
+    top_hit = vector_db.search_vector(
+        vector=query_vector,
+        style=request.style,
+        emotion=request.emotion
+    )
 
     if top_hit and top_hit.score >= SIMILARITY_THRESHOLD:
         return SearchResponse(dream_id=top_hit.payload.get("dream_id"), score=top_hit.score)
