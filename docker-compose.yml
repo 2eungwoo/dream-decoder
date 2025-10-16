@@ -8,38 +8,6 @@ services:
       - "6379:6379"
     command: redis-server --save 60 1 --loglevel warning --maxmemory 128mb --maxmemory-policy volatile-lfu
 
-  redis-exporter:
-    image: oliver006/redis_exporter:latest
-    container_name: redis-exporter
-    depends_on:
-      - redis
-    environment:
-      - REDIS_ADDR=redis:6379
-    ports:
-      - "9121:9121"
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    depends_on:
-      - redis-exporter
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-
-  grafana:
-    image: grafana/grafana-oss:latest
-    container_name: grafana
-    depends_on:
-      - prometheus
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
-
   embedding-server:
     build: ./embedding-server
     container_name: embedding-server
@@ -59,5 +27,4 @@ services:
       - qdrant-storage:/qdrant/storage
 
 volumes:
-  grafana-storage:
   qdrant-storage:
