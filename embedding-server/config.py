@@ -5,4 +5,4 @@ COLLECTION_NAME = "dreams"
 VECTOR_SIZE = 768  # jhgan/ko-sbert-nli 모델
 DISTANCE_METRIC = "Cosine"
 MODEL_NAME = 'jhgan/ko-sbert-nli'
-SIMILARITY_THRESHOLD = 0.95
+SIMILARITY_THRESHOLD = 0.8
