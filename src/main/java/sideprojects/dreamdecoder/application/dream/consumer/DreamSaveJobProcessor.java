@@ -78,7 +78,7 @@ public class DreamSaveJobProcessor {
         log.info("[L2 캐시 확인] 사용자 ID: {}의 꿈 내용으로 유사 꿈 검색 시작함", payload.userId());
         EmbeddingSearchResponse searchResponse = embeddingService.searchSimilarDream(
                 payload.dreamContent(), payload.style(), payload.dreamEmotion()
-        ).block();
+        );
 
         if (searchResponse == null || !searchResponse.hasResult()) {
             return false; // 캐시 미스
@@ -123,11 +123,6 @@ public class DreamSaveJobProcessor {
                         savedDream.getDreamContent(),
                         savedDream.getAiStyle(),
                         savedDream.getDreamEmotion()
-                )
-                .subscribeOn(Schedulers.boundedElastic()) // 비동기 실행을 위해 스케줄러 지정
-                .subscribe(
-                        responseMessage -> log.info("[L2 캐시 쓰기 성공] 응답: {}", responseMessage), // onNext
-                        error -> log.error("[L2 캐시 쓰기 실패] 꿈 ID: {} 벡터 DB 추가 중 에러 발생", savedDream.getId(), error) // onError
                 );
     }
 
