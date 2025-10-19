@@ -1,10 +1,15 @@
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
+import logging
 
 import model
 import vector_db
 from config import SIMILARITY_THRESHOLD
+
+# --- 로깅 설정 ---
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # --- FastAPI 앱 초기화 ---
 app = FastAPI()
@@ -35,14 +40,18 @@ def startup_event():
 @app.post("/add", status_code=201)
 def add_dream_vector(request: AddRequest):
     """꿈 텍스트를 인코딩하고 벡터 데이터베이스에 메타데이터와 함께 추가함"""
+    log.info(f"'/add' 엔드포인트 수신, 꿈 ID: {request.dream_id}")
     vector = model.encode_text(request.text)
+    log.info(f"꿈 ID: {request.dream_id} 벡터 생성 완료, DB 추가 시작함")
+
     vector_db.add_vector(
         dream_id=request.dream_id,
         vector=vector,
         style=request.style,
         emotion=request.emotion
     )
-    return {"message": f"Dream with ID {request.dream_id} added successfully."}
+    log.info(f"꿈 ID: {request.dream_id} DB 추가 완료됨")
+    return {"message": f"꿈 ID: {request.dream_id} 추가 성공"}
 
 @app.post("/search", response_model=SearchResponse)
 def search_similar_dreams(request: SearchRequest):
