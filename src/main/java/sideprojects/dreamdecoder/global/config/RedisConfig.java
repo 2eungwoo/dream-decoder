@@ -19,13 +19,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
-import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
-import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
-@EnableCaching
 @Configuration
 public class RedisConfig {
 
@@ -64,20 +59,4 @@ public class RedisConfig {
         return new RedissonSpringCacheManager(redissonClient, config);
     }
 
-    @Bean("dreamInterpretationKeyGenerator")
-    public KeyGenerator keyGenerator() {
-        return (target, method, params) -> {
-            AiStyle style = (AiStyle) params[0];
-            DreamEmotion emotion = (DreamEmotion) params[1];
-            List<DreamType> types = (List<DreamType>) params[2];
-
-            String sortedSymbolTypes = types.stream()
-                .map(DreamType::name)
-                .sorted()
-                .collect(Collectors.joining(","));
-
-            return "interpretation:" + style.name() + ":" + emotion.name() + ":"
-                + sortedSymbolTypes;
-        };
-    }
 }
