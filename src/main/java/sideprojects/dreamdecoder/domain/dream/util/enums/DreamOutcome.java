@@ -13,7 +13,8 @@ public enum DreamOutcome {
     BAD("나쁜 징조"),
     VERY_BAD("아주 나쁜 징조"),
     WARNING("주의/경고 필요"),
-    OPPORTUNITY("기회/전환점");
+    OPPORTUNITY("기회/전환점"),
+    NONE("없음");
 
     private final String description;
 }

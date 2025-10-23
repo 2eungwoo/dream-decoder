@@ -13,7 +13,7 @@ public class PromptGenerator {
         String types = String.join(", ", allTypeNames);
         return "너는 꿈의 핵심 상징 추출 AI야. 사용자 꿈 내용에서 다음 키워드만 식별해: [" + types + "]. " +
                 "응답은 반드시 JSON 문자열 배열이어야 해. 예: [\"PIG\", \"GOLD\"]. " +
-                "다른 설명 없이 키워드만 포함해줘. 없으면 빈 배열 []을 반환해.";
+                "다른 설명 없이 키워드만 포함해줘. 없으면 [\"NONE\"]을 반환해.";
     }
 
     public static String generateInterpretationSystemPrompt(AiStyle style, DreamEmotion dreamEmotion, List<DreamType> extractedTypes) {

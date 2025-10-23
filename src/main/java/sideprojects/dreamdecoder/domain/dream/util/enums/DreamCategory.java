@@ -22,7 +22,9 @@ public enum DreamCategory {
     LOSS_CHANGE("상실/변화"),
     OBJECTS("사물/음식/의복"),
     SOCIAL_PUBLIC("사회/공공장소"),
-    DREAM_SIGNS("징조/예지");
+    DREAM_SIGNS("징조/예지"),
+    NONE("없음");
+
 
     private final String description;
 }

@@ -104,7 +104,10 @@ public enum DreamType {
     // 징조/예지 (DREAM_SIGNS)
     SUNRISE(DreamCategory.DREAM_SIGNS, DreamOutcome.VERY_GOOD, "해돋이"),
     FULL_MOON(DreamCategory.DREAM_SIGNS, DreamOutcome.GOOD, "보름달"),
-    STAR_FALL(DreamCategory.DREAM_SIGNS, DreamOutcome.OPPORTUNITY, "별똥별");
+    STAR_FALL(DreamCategory.DREAM_SIGNS, DreamOutcome.OPPORTUNITY, "별똥별"),
+
+    // 추출 심볼 없는 경우
+    NONE(DreamCategory.NONE, DreamOutcome.NONE, "없음");
 
     private final DreamCategory category;
     private final DreamOutcome outcome;
