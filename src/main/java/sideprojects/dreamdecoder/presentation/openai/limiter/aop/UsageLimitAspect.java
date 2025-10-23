@@ -35,9 +35,7 @@ public class UsageLimitAspect {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
         Long count = ops.increment(key);
 
-        if (count != null && count == 1) {
-            redisTemplate.expire(key, 1, TimeUnit.DAYS);
-        }
+
 
         if (count != null && count > usageLimitCheck.limit()) {
             throw new UsageLimitExceededException(UsageLimitErrorCode.USAGE_LIMIT_EXCEEDED);

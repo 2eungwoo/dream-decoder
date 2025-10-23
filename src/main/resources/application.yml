@@ -19,6 +19,8 @@ spring:
         key: dream:save:jobs
         group: dream-savers
         consumer-prefix: consumer-
+  cache:
+    type: none
 
 #  sql:
 #    init:
