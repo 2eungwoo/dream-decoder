@@ -65,6 +65,7 @@ public class RedisConfig {
         return new RedissonSpringCacheManager(redissonClient, config, new JsonJacksonCodec(objectMapper));
     }
 
+    // API 응답용 매퍼
     @Primary
     @Bean
     public ObjectMapper objectMapper() {
@@ -74,6 +75,7 @@ public class RedisConfig {
         return objectMapper;
     }
 
+    // 캐시 데이터 응답용 매퍼
     @Bean("redisCacheObjectMapper")
     public ObjectMapper redisCacheObjectMapper() {
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
