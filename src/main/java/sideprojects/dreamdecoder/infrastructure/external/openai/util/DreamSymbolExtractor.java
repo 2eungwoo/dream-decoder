@@ -33,6 +33,7 @@ public class DreamSymbolExtractor {
 
         String systemPrompt = PromptGenerator.generateSymbolExtractionSystemPrompt(allTypeNames);
         String jsonResponse = openAiClient.chat(systemPrompt, dreamContent);
+        log.info("AI가 추출한 SYMBOLE JSON 응답: {}", jsonResponse);
 
         try {
             List<String> extractedKeywords = objectMapper.readValue(jsonResponse, new TypeReference<>() {});
