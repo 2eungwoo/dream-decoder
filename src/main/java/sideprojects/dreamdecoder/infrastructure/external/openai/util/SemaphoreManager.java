@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RSemaphore;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
-import sideprojects.dreamdecoder.global.config.ConcurrencyProperties;
-import sideprojects.dreamdecoder.global.config.SemaphoreProperties;
+import sideprojects.dreamdecoder.global.properties.ConcurrencyProperties;
+import sideprojects.dreamdecoder.global.properties.SemaphoreProperties;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 

@@ -1,4 +1,4 @@
-package sideprojects.dreamdecoder.global.config;
+package sideprojects.dreamdecoder.global.properties;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -9,7 +9,7 @@ import org.redisson.api.RedissonClient;
 import org.redisson.api.StreamMessageId;
 import org.redisson.api.stream.StreamCreateGroupArgs;
 import org.springframework.stereotype.Component;
-import sideprojects.dreamdecoder.global.config.RedisStreamProperties;
+import sideprojects.dreamdecoder.global.properties.RedisStreamProperties;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;

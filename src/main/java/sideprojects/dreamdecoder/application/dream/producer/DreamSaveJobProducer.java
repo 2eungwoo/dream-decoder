@@ -1,13 +1,12 @@
 package sideprojects.dreamdecoder.application.dream.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RStream;
 import org.redisson.api.RedissonClient;
 import org.redisson.api.stream.StreamAddArgs;
 import org.springframework.stereotype.Component;
-import sideprojects.dreamdecoder.global.config.RedisStreamProperties;
+import sideprojects.dreamdecoder.global.properties.RedisStreamProperties;
 
 import java.util.HashMap;
 import java.util.Map;
