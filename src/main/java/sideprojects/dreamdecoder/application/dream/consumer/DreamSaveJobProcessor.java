@@ -12,7 +12,7 @@ import sideprojects.dreamdecoder.domain.dream.util.enums.DreamType;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.dto.EmbeddingSearchResponse;
 import sideprojects.dreamdecoder.infrastructure.external.embedding.service.EmbeddingService;
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
-import sideprojects.dreamdecoder.infrastructure.external.openai.service.DreamInterpretationGeneratorService;
+import sideprojects.dreamdecoder.infrastructure.external.openai.service.InterpretationProvider;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.DreamSymbolExtractor;
 import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
 
@@ -28,7 +28,7 @@ public class DreamSaveJobProcessor {
 
     private final DreamService dreamService;
     private final DreamSymbolExtractor dreamSymbolExtractor;
-    private final DreamInterpretationGeneratorService dreamInterpretationGeneratorService;
+    private final InterpretationProvider interpretationProvider;
     private final EmbeddingService embeddingService;
 
     private record DreamJobPayload(Long userId, String dreamContent, DreamEmotion dreamEmotion, AiStyle style, String tags) {
@@ -104,9 +104,9 @@ public class DreamSaveJobProcessor {
     private DreamModel handleCacheMiss(DreamJobPayload payload) {
         log.info("[L2 캐시 미스] 유사 꿈 없음, L1 심볼 캐시 확인 및 OpenAI 해석 진행함");
 
-        // L1 심볼 캐시 확인은 dreamInterpretationGeneratorService 호출 시 자동으로 처리됨
+        // L1 심볼 캐시 확인은 interpretationProvider 호출 시 자동으로 처리됨
         List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(payload.dreamContent());
-        String interpretation = dreamInterpretationGeneratorService.generateInterpretation(
+        String interpretation = interpretationProvider.generateInterpretation(
                 payload.style(), payload.dreamEmotion(), extractedTypes, payload.dreamContent());
 
         DreamModel dreamModelToSave = createDreamModel(payload, interpretation, extractedTypes);
