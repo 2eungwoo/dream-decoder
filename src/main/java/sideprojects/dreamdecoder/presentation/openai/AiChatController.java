@@ -30,7 +30,7 @@ public class AiChatController {
             @RequestHeader("Idempotency-Key") String idempotencyKey,
             @Valid @RequestBody DreamInterpretationRequest request) {
 
-        dreamAnalysisRequestService.requestAnalysis(userId, idempotencyKey, request);
+        dreamAnalysisRequestService.requestAnalysis(userId, request);
 
         return ApiResponse.success(OpenAiResponseCode.AI_CHAT_REQUEST_SUCCESS, "해몽 분석 요청이 성공적으로 접수되었습니다. 잠시 후 확인해주세요.");
     }
