@@ -18,6 +18,7 @@ import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.cache.CacheManager;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -42,8 +43,8 @@ public class RedisConfig {
         return builder -> builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-    @Bean
-    public CacheManager cacheManager(RedissonClient redissonClient) {
+    @Bean(name = "redisCacheManager")
+    public CacheManager redisCacheManager(RedissonClient redissonClient) {
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
             .allowIfSubType(Object.class)
             .build();
@@ -60,4 +61,3 @@ public class RedisConfig {
         return new RedissonSpringCacheManager(redissonClient, config, new JsonJacksonCodec(cacheObjectMapper));
     }
 }
-

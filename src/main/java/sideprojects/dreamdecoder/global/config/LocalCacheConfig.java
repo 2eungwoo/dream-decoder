@@ -1,7 +1,8 @@
 package sideprojects.dreamdecoder.global.config;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sideprojects.dreamdecoder.global.properties.LocalCacheProperties;
@@ -17,8 +18,10 @@ public class LocalCacheConfig {
             .expireAfterWrite(properties.getExpireAfterWrite());
     }
 
-    @Bean(name = "localCache")
-    public Cache<String, Object> localCache(Caffeine<Object, Object> localCacheBuilder) {
-        return localCacheBuilder.build();
+    @Bean(name = "localCacheManager")
+    public CacheManager localCacheManager(Caffeine<Object, Object> localCacheBuilder) {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(localCacheBuilder);
+        return cacheManager;
     }
 }
