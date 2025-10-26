@@ -38,6 +38,11 @@ spring:
         use_sql_comments: true
     open-in-view: false
 
+local-cache:
+  initial-capacity: 256
+  maximum-size: 2000
+  expire-after-write: 30m
+
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace
