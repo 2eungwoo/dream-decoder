@@ -25,7 +25,7 @@ public class DreamSymbolExtractor {
     private final OpenAiClient openAiClient;
     private final ObjectMapper objectMapper;
 
-    @Cacheable("dreamSymbols")
+    @Cacheable(cacheManager = "localCacheManager", cacheNames = "dreamSymbols")
     public List<DreamType> extractSymbols(String dreamContent) {
         List<String> allTypeNames = Stream.of(DreamType.values())
                 .map(Enum::name)

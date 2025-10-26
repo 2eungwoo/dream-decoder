@@ -19,7 +19,9 @@ public class InterpretationProvider {
 
     private final OpenAiClient openAiClient;
 
-    @Cacheable(cacheNames = "dreamInterpretations", keyGenerator = "dreamInterpretationKeyGenerator")
+    @Cacheable(cacheManager = "localCacheManager",
+        cacheNames = "dreamInterpretations",
+        keyGenerator = "dreamInterpretationKeyGenerator")
     public String generateInterpretation(AiStyle style, DreamEmotion dreamEmotion, List<DreamType> extractedTypes, String dreamContent) {
         log.info("[L1 캐시 미스] OpenAI API 호출하여 꿈 해석 생성");
         String systemPrompt = PromptGenerator.generateInterpretationSystemPrompt(style, dreamEmotion, extractedTypes);
