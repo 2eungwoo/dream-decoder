@@ -44,6 +44,7 @@ public class RedisConfig {
     }
 
     @Bean(name = "redisCacheManager")
+    @Primary
     public CacheManager redisCacheManager(RedissonClient redissonClient) {
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
             .allowIfSubType(Object.class)
