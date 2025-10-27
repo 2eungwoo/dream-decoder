@@ -18,12 +18,11 @@ import org.redisson.spring.cache.RedissonSpringCacheManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -39,7 +38,6 @@ public class RedisConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://" + redisHost + ":" + redisPort);
-        config.setCodec(new org.redisson.client.codec.StringCodec(java.nio.charset.StandardCharsets.UTF_8));
         return Redisson.create(config);
     }
 
@@ -70,13 +68,17 @@ public class RedisConfig {
 
         ObjectMapper cacheObjectMapper = new ObjectMapper();
         cacheObjectMapper.registerModule(new JavaTimeModule());
-        cacheObjectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        cacheObjectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL,
+            JsonTypeInfo.As.PROPERTY);
         cacheObjectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         Map<String, CacheConfig> config = new HashMap<>();
-        config.put("dreamInterpretations", new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
-        config.put("dreamSymbols", new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
+        config.put("dreamInterpretations",
+            new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
+        config.put("dreamSymbols",
+            new CacheConfig(Duration.ofHours(24).toMillis(), Duration.ofHours(24).toMillis()));
 
-        return new RedissonSpringCacheManager(redissonClient, config, new JsonJacksonCodec(cacheObjectMapper));
+        return new RedissonSpringCacheManager(redissonClient, config,
+            new JsonJacksonCodec(cacheObjectMapper));
     }
 }
