@@ -21,6 +21,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
@@ -35,12 +39,26 @@ public class RedisConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer().setAddress("redis://" + redisHost + ":" + redisPort);
+        config.setCodec(new org.redisson.client.codec.StringCodec(java.nio.charset.StandardCharsets.UTF_8));
         return Redisson.create(config);
     }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         return builder -> builder.featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+        redisTemplate.afterPropertiesSet();
+
+        return redisTemplate;
     }
 
     @Bean(name = "redisCacheManager")
