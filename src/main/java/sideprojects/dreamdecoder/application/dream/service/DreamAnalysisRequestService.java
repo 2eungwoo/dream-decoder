@@ -14,9 +14,10 @@ public class DreamAnalysisRequestService {
     private final DreamSaveJobProducer dreamSaveJobProducer;
 
     // OpenAI 호출 없이, 해몽에 필요한 정보만 담아 Redis에 즉시 발행
-    public void requestAnalysis(Long userId, DreamInterpretationRequest request) {
+    public void requestAnalysis(Long userId, String idempotencyKey, DreamInterpretationRequest request) {
         DreamSaveJobCommand command = DreamSaveJobCommand.builder()
                 .userId(userId)
+                .idempotencyKey(idempotencyKey)
                 .dreamContent(request.getDreamContent())
                 .dreamEmotion(request.getDreamEmotion())
                 .tags(request.getTags())

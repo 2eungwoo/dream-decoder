@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 public record DreamSaveJobCommand(
     Long userId,
+    String idempotencyKey,
     String dreamContent,
     String interpretation,
     DreamEmotion dreamEmotion,
