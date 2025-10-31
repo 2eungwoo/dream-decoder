@@ -5,5 +5,10 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.util.Map;
 
-public record DreamJobPayload(Long userId, String dreamContent, DreamEmotion dreamEmotion, AiStyle style, String tags) {
+public record DreamJobPayload(Long userId,
+                              String dreamContent,
+                              DreamEmotion dreamEmotion,
+                              AiStyle style,
+                              String tags) {
+
 }
