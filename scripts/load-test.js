@@ -3,12 +3,12 @@ import { check, sleep } from 'k6';
 import { randomUUID } from 'k6/crypto';
 
 export const options = {
-  vus: 2, // 10명의 가상 사용자가
-  duration: '10s', // 30초 동안 테스트를 수행합니다.
+  vus: 20,
+  duration: '30s',
 };
 
-const API_URL = 'http://localhost:8080/ai/chat?userId=3';
-const AUTH_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyNSIsImlhdCI6MTc2MjE1Nzk0OSwiZXhwIjoxNzYyMTYxNTQ5fQ.jztxcysHJAW0z-sDF6MM3cHxOcex3zyaRGe6ZpIw5h4';
+const API_URL = 'http://localhost:8080/ai/chat?userId=1';
+const AUTH_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImlhdCI6MTc2MjE1OTMzNSwiZXhwIjoxNzYyMTYyOTM1fQ.mJ84EklqfE9LrG0RzVyoYpUTPw4AUCk1hRX_QyN-BII';
 
 export default function () {
   const headers = {
