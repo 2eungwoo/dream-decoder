@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UsageLimitCheck {
-    long limit() default 100L;
+    long limit() default 500L;
 }
