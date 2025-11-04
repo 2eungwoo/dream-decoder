@@ -27,7 +27,7 @@ public class FeedbackLog extends BaseTimeEntity {
     private Long userId;
 
     @Column(nullable = false)
-    private boolean isSatisfied; // true: 만족(👍), false: 불만족(👎)
+    private boolean isSatisfied; // true: 만족, false: 불만족
 
     @Lob
     @Column(nullable = false)
