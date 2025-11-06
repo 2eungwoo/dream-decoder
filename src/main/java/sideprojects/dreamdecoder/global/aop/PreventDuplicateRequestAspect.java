@@ -7,6 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RBucket;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -38,20 +39,26 @@ public class PreventDuplicateRequestAspect {
         log.info("[AOP] 생성된 중복 방지 키: {}", lockKey);
 
         Duration ttl = lockProperties.getTtl();
-        RBucket<String> bucket = redissonClient.getBucket(lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
 
-        // SET if Not Exists, with TTL
-        log.info("[AOP] 중복 방지 키 설정 시도... (TTL: {}초)", ttl.toSeconds());
-        boolean set = bucket.trySet("locked", ttl.toSeconds(), TimeUnit.SECONDS);
-        log.info("[AOP] 키 설정 결과: {}", set);
+        try {
+            // 락 획득 시도 (지정된 시간 동안 대기 후 락 획득, 획득 실패 시 false 반환)
+            log.info("[AOP] 락 획득 시도... (TTL: {}초)", ttl.toSeconds());
+            boolean locked = lock.tryLock(0, ttl.toSeconds(), TimeUnit.SECONDS); // 0초 대기, TTL 적용
 
-        if (!set) {
-            log.warn("[AOP] 키가 이미 존재함. 중복 요청으로 판단. Key: {}", lockKey);
-            throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
+            if (!locked) {
+                log.warn("[AOP] 락 획득 실패. 중복 요청으로 판단. Key: {}", lockKey);
+                throw new OpenAiApiException(OpenAiErrorCode.DUPLICATE_REQUEST);
+            }
+
+            log.info("[AOP] 락 획득 성공. 비즈니스 로직 실행. Key: {}", lockKey);
+            return joinPoint.proceed();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+                log.info("[AOP] 락 해제 완료. Key: {}", lockKey);
+            }
         }
-
-        log.info("[AOP] 키 설정 성공. 비즈니스 로직 실행. Key: {}", lockKey);
-        return joinPoint.proceed();
     }
 
     private String createDynamicKey(ProceedingJoinPoint joinPoint, String keyExpression) {
