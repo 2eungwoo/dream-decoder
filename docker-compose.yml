@@ -16,10 +16,6 @@ services:
     ports:
       - "8000:8000"
     restart: always
-    deploy:
-      resources:
-        limits:
-          memory: 1G
 
   qdrant:
     image: qdrant/qdrant:latest
