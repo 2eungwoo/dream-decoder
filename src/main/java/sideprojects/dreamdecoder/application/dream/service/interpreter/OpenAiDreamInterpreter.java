@@ -18,7 +18,11 @@ public class OpenAiDreamInterpreter implements DreamInterpreter {
     @Override
     public InterpretationResult interpret(DreamJobPayload payload) {
         // L1 심볼 캐시 확인은 interpretationProvider 호출 시 자동으로 처리됨
-        List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(payload.dreamContent());
+        List<DreamType> extractedTypes = dreamSymbolExtractor.extractSymbols(
+                payload.style(),
+                payload.dreamEmotion(),
+                payload.dreamContent()
+        );
         String interpretation = interpretationProvider.generateInterpretation(
                 payload.style(),
                 payload.dreamEmotion(),

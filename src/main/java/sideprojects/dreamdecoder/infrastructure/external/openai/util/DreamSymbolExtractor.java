@@ -11,6 +11,9 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.config.OpenAiCli
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiApiException;
 import sideprojects.dreamdecoder.infrastructure.external.openai.util.exception.OpenAiErrorCode;
 
+import sideprojects.dreamdecoder.domain.dream.util.enums.DreamEmotion;
+import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,8 +28,8 @@ public class DreamSymbolExtractor {
     private final OpenAiClient openAiClient;
     private final ObjectMapper objectMapper;
 
-    @Cacheable(cacheManager = "localCacheManager", cacheNames = "dreamSymbols")
-    public List<DreamType> extractSymbols(String dreamContent) {
+    @Cacheable(cacheManager = "localCacheManager", cacheNames = "dreamSymbols", keyGenerator = "dreamSymbolsKeyGenerator")
+    public List<DreamType> extractSymbols(AiStyle style, DreamEmotion dreamEmotion, String dreamContent) {
         List<String> allTypeNames = Stream.of(DreamType.values())
                 .map(Enum::name)
                 .collect(Collectors.toList());

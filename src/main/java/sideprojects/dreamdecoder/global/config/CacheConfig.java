@@ -14,6 +14,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 @Configuration
 public class CacheConfig {
 
+    // 해몽 결과 캐싱 키 generator
     @Bean("dreamInterpretationKeyGenerator")
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
@@ -28,6 +29,18 @@ public class CacheConfig {
 
             return "interpretation:" + style.name() + ":" + emotion.name() + ":"
                 + sortedSymbolTypes;
+        };
+    }
+
+    // 심볼 캐싱 키 generator
+    @Bean("dreamSymbolsKeyGenerator")
+    public KeyGenerator dreamSymbolsKeyGenerator() {
+        return (target, method, params) -> {
+            AiStyle style = (AiStyle) params[0];
+            DreamEmotion emotion = (DreamEmotion) params[1];
+            String dreamContent = (String) params[2];
+
+            return "symbols:" + style.name() + ":" + emotion.name() + ":" + dreamContent;
         };
     }
 }
