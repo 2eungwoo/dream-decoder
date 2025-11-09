@@ -6,3 +6,4 @@ VECTOR_SIZE = 768  # jhgan/ko-sbert-nli 모델
 DISTANCE_METRIC = "Cosine"
 MODEL_NAME = 'jhgan/ko-sbert-nli'
 SIMILARITY_THRESHOLD = 0.8
+TTL_SECONDS = 86400  # 1일
