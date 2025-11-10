@@ -8,7 +8,7 @@ import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import sideprojects.dreamdecoder.presentation.dream.dto.request.SaveDreamRequest;
+import sideprojects.dreamdecoder.presentation.web.dream.dto.request.SaveDreamRequest;
 
 @Getter
 public class DreamModel {

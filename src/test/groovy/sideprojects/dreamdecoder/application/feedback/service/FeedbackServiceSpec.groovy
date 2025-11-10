@@ -1,8 +1,9 @@
 package sideprojects.dreamdecoder.application.feedback.service
 
+import sideprojects.dreamdecoder.application.web.feedback.service.FeedbackService
 import sideprojects.dreamdecoder.domain.feedback.persistence.FeedbackLog
 import sideprojects.dreamdecoder.domain.feedback.persistence.FeedbackLogRepository
-import sideprojects.dreamdecoder.presentation.feedback.dto.FeedbackRequest
+import sideprojects.dreamdecoder.presentation.web.feedback.dto.FeedbackRequest
 import spock.lang.Specification
 
 class FeedbackServiceSpec extends Specification {

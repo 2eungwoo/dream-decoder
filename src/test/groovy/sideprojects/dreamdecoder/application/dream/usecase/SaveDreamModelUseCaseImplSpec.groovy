@@ -1,8 +1,8 @@
 package sideprojects.dreamdecoder.application.dream.usecase.save
 
-
+import sideprojects.dreamdecoder.application.web.dream.usecase.save.SaveDreamUseCaseImpl
 import spock.lang.Specification
-import sideprojects.dreamdecoder.application.dream.service.DreamService
+import sideprojects.dreamdecoder.application.web.dream.service.DreamService
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel
 import sideprojects.dreamdecoder.infrastructure.external.openai.enums.AiStyle
 
