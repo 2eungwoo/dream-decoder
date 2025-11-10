@@ -3,6 +3,8 @@ server:
 
 spring:
   shell:
+    interactive:
+      enabled: true
     history:
       enabled: true
   config:
