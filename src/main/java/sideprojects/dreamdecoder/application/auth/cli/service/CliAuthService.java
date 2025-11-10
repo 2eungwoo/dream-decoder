@@ -5,9 +5,6 @@ import org.springframework.stereotype.Service;
 import sideprojects.dreamdecoder.application.auth.cli.service.validator.CliPasswordValidator;
 import sideprojects.dreamdecoder.application.auth.usecase.LoginUseCase;
 import sideprojects.dreamdecoder.application.auth.usecase.SignUpUseCase;
-import sideprojects.dreamdecoder.application.auth.validator.LoginValidator; // Use existing LoginValidator
-import sideprojects.dreamdecoder.infrastructure.cli.TokenManager;
-import sideprojects.dreamdecoder.infrastructure.security.TokenManager;
 import sideprojects.dreamdecoder.presentation.auth.dto.AuthResponse;
 import sideprojects.dreamdecoder.presentation.auth.dto.LoginRequest;
 import sideprojects.dreamdecoder.presentation.auth.dto.SignUpRequest;
