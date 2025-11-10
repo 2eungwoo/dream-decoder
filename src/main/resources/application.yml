@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  shell:
+    history:
+      enabled: true
   config:
     import: optional:env[.env]
 
@@ -44,6 +47,8 @@ local-cache:
   expire-after-write: 30m
 
 logging:
+#  file:
+#    name: logs/app.log
   level:
     org.hibernate.type.descriptor.sql: trace
     com.example: debug
