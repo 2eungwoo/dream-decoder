@@ -1,8 +1,7 @@
 from qdrant_client import QdrantClient, models
 from qdrant_client.http import models as rest_models
 from typing import List, Optional
-from config import QDRANT_HOST, QDRANT_PORT, COLLECTION_NAME, VECTOR_SIZE, DISTANCE_METRIC, TTL_SECONDS
-import time
+from config import QDRANT_HOST, QDRANT_PORT, COLLECTION_NAME, VECTOR_SIZE, DISTANCE_METRIC
 
 # 클라이언트 초기화
 _client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
@@ -17,13 +16,11 @@ def init_db():
         _client.recreate_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=models.VectorParams(size=VECTOR_SIZE, distance=DISTANCE_METRIC),
-            ttl=models.TtlConfig(ttl_duration_seconds=TTL_SECONDS, payload_field_name="expires_at"),
         )
         print(f"컬렉션 '{COLLECTION_NAME}' 성공적으로 생성됨")
 
 def add_vector(dream_id: int, vector: List[float], style: str, emotion: str):
     """꿈 벡터와 메타데이터(스타일, 감정)를 데이터베이스에 업서트함"""
-    expires_at = int(time.time()) + TTL_SECONDS
     _client.upsert(
         collection_name=COLLECTION_NAME,
         points=[
@@ -33,8 +30,7 @@ def add_vector(dream_id: int, vector: List[float], style: str, emotion: str):
                 payload={
                     "dream_id": dream_id,
                     "style": style,
-                    "emotion": emotion,
-                    "expires_at": expires_at
+                    "emotion": emotion
                 }
             )
         ],
