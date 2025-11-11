@@ -1,0 +1,40 @@
+services:
+  app:
+    build: .
+    container_name: dream-decoder-app
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/dream_decoder
+      SPRING_DATASOURCE_USERNAME: dreamuser
+      SPRING_DATASOURCE_PASSWORD: dreampw
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - dreamnet
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: dream_decoder
+      MYSQL_USER: dreamuser
+      MYSQL_PASSWORD: dreampw
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - dreamnet
+
+volumes:
+  mysql_data:
+
+networks:
+  dreamnet:
+    external: true
