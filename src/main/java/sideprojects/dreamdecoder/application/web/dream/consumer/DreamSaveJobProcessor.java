@@ -37,8 +37,8 @@ public class DreamSaveJobProcessor {
             String lockKey = LOCK_KEY_PREFIX + command.idempotencyKey();
             RLock lock = redissonClient.getLock(lockKey);
 
-            // 락 획득 시도 (max 5s 대기, 획득 후 10m 유지, 시간은 일단 임의설정함)
-            boolean acquired = lock.tryLock(5, 10, TimeUnit.MINUTES);
+            // 락 획득 시도 (max 5s 대기, 획득 후 7s 유지, 시간은 일단 임의설정함)
+            boolean acquired = lock.tryLock(5, 7, TimeUnit.SECONDS);
 
             if (!acquired) {
                 log.warn("다른 컨슈머가 작업을 처리 중이므로 현재 메시지를 건너뜁니다. Lock Key: {}, Message ID: {}", lockKey, messageId);
