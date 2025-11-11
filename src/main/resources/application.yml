@@ -11,14 +11,14 @@ spring:
     import: optional:env[.env]
 
   datasource:
-    url: jdbc:mysql://localhost:3306/dream_decoder?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql:3306/dream_decoder?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
       stream:
         key: dream:save:jobs
