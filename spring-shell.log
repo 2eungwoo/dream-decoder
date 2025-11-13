@@ -25,3 +25,14 @@
 1762790198535:help
 1762790203169:chat
 1762790278628:quit
+1763021109205:login
+1763021114791:login --username user1 --password qlqjs123
+1763021117076:help
+1763021119370:chat
+1763021137093:chat --dreamContent "높은 곳에서 떨어지는 꿈" --dreamEmotion FEAR --aiStyle HAPPY --tags "프롬프트바꾸고테스트"
+1763021153703:chat --dreamContent "높은 곳에서 떨어지는 꿈" --dreamEmotion HAPPY --aiStyle ENFP --tags "프롬프트바꾸고테스트"
+1763021185912:help
+1763021193932:get-dream-analysis
+1763021200220:get-dream-analysis 11
+1763021202549:get-dream-analysis 80
+1763021226066:get-dream-analysis 878
