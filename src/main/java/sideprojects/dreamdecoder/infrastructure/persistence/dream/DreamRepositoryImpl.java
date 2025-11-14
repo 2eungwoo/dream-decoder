@@ -3,7 +3,7 @@ package sideprojects.dreamdecoder.infrastructure.persistence.dream;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import sideprojects.dreamdecoder.application.dream.service.DreamRepository;
+import sideprojects.dreamdecoder.application.web.dream.service.DreamRepository;
 import sideprojects.dreamdecoder.domain.dream.model.DreamModel;
 import sideprojects.dreamdecoder.domain.dream.persistence.DreamEntity;
 import sideprojects.dreamdecoder.domain.dream.util.exception.DreamNotFoundException;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static sideprojects.dreamdecoder.domain.dream.persistence.QDreamEntity.dreamEntity;
-import static sideprojects.dreamdecoder.domain.dream.persistence.QDreamSymbol.dreamSymbol;
 
 @Repository
 @RequiredArgsConstructor

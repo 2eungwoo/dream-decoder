@@ -11,21 +11,35 @@ public class PromptGenerator {
 
     public static String generateSymbolExtractionSystemPrompt(List<String> allTypeNames) {
         String types = String.join(", ", allTypeNames);
-        return "너는 꿈의 핵심 상징 추출 AI야. 사용자 꿈 내용에서 다음 키워드만 식별해: [" + types + "]. " +
-                "응답은 반드시 JSON 문자열 배열이어야 해. 예: [\"PIG\", \"GOLD\"]. " +
-                "다른 설명 없이 키워드만 포함해줘. 없으면 [\"NONE\"]을 반환해.";
+        return String.format(
+                "You are an AI expert at extracting key symbols from dream descriptions. " +
+                "Your task is to identify and extract specific keywords from the user's dream content. " +
+                "You can ONLY extract from the following list of keywords: [%s]. " +
+                "Your response MUST be a JSON string array. For example: [\"PIG\", \"GOLD\"]. " +
+                "Do not include any explanations or any other text. " +
+                "If no keywords are found, you MUST return [\"NONE\"].",
+                types);
     }
 
     public static String generateInterpretationSystemPrompt(AiStyle style, DreamEmotion dreamEmotion, List<DreamType> extractedTypes) {
         String symbols = extractedTypes.stream()
-                .map(t -> String.format("'%s'(%s, %s)",
+                .map(t -> String.format("- %s: %s (Category: %s, Outcome: %s)",
+                        t.name(),
                         t.getDescription(),
                         t.getCategory().getDescription(),
                         t.getOutcome().getDescription()))
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining("\n"));
 
-        return String.format("너는 %s 스타일의 예지력 있는 꿈 해몽가야. 꿈의 핵심 상징은 %s, 느낀 감정은 '%s'이야. " +
-                "이 상징과 감정을 종합적으로 해석하고, 일관된 이야기와 조언을 포함해서 400자 내외로 응답해줘.",
-                style.getStyle(), symbols, dreamEmotion.getDescription());
+        return String.format(
+                "You are an insightful dream interpreter with a %s style. " +
+                "Your mission is to interpret a dream based ONLY on the 'Interpretation Data' provided below. Do not use any other knowledge. " +
+                "--- Interpretation Data ---\n" +
+                "Emotion: %s\n" +
+                "Key Symbols and Meanings:\n%s\n" +
+                "--- End of Data ---\n" +
+                "Based ONLY on the data above, provide a comprehensive interpretation of the user's dream. " +
+                "Combine the symbols and emotion into a coherent story and give advice. " +
+                "Your response MUST be in Korean and be approximately 400 characters long.",
+                style.getStyle(), dreamEmotion.getDescription(), symbols);
     }
 }

@@ -2,8 +2,50 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: docker
+
+  shell:
+    interactive:
+      enabled: true
+    history:
+      enabled: true
+
   config:
     import: optional:env[.env]
+
+# ────────────────────────────────
+# ✅ Docker 환경
+# ────────────────────────────────
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:mysql://mysql:3306/dream_decoder?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+      stream:
+        key: dream:save:jobs
+        group: dream-savers
+        consumer-prefix: consumer-
+
+# ────────────────────────────────
+# ✅ Local 개발 환경
+# ────────────────────────────────
+---
+spring:
+  config:
+    activate:
+      on-profile: local-dev
 
   datasource:
     url: jdbc:mysql://localhost:3306/dream_decoder?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -19,13 +61,12 @@ spring:
         key: dream:save:jobs
         group: dream-savers
         consumer-prefix: consumer-
-  cache:
-    type: none
 
-#  sql:
-#    init:
-#      mode: always
-
+# ────────────────────────────────
+# ✅ 공통 설정
+# ────────────────────────────────
+---
+spring:
   jpa:
     defer-datasource-initialization: true
     hibernate:
@@ -58,7 +99,7 @@ jwt:
   expiration: 3600000
 
 concurrency:
-  permits: 200 # AI 요청 동시 처리 허용량 --> gpt-5-nano 기준 500RPM, 100000TPM을 고려한 수치(최대의 80%정도로 설정)
+  permits: 200
   duplicate-request-lock:
     key-prefix: "lock:ai-chat:user:"
     ttl: 3s

@@ -1,14 +1,15 @@
 package sideprojects.dreamdecoder.application.auth.service
 
+import sideprojects.dreamdecoder.application.web.auth.service.SignUpService
 import spock.lang.Specification
-import sideprojects.dreamdecoder.application.auth.usecase.PasswordEncryptUseCase
-import sideprojects.dreamdecoder.application.auth.validator.SignUpValidator
+import sideprojects.dreamdecoder.application.web.auth.usecase.PasswordEncryptUseCase
+import sideprojects.dreamdecoder.application.web.auth.validator.SignUpValidator
 import sideprojects.dreamdecoder.domain.auth.model.UserModel
 import sideprojects.dreamdecoder.domain.auth.persistence.User
 import sideprojects.dreamdecoder.domain.auth.persistence.UserRepository
 import sideprojects.dreamdecoder.domain.auth.util.mapper.UserMapper
-import sideprojects.dreamdecoder.presentation.auth.dto.AuthResponse
-import sideprojects.dreamdecoder.presentation.auth.dto.SignUpRequest
+import sideprojects.dreamdecoder.presentation.web.auth.dto.AuthResponse
+import sideprojects.dreamdecoder.presentation.web.auth.dto.SignUpRequest
 
 class SignUpServiceSpec extends Specification {
 

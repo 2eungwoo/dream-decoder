@@ -1,12 +1,12 @@
 package sideprojects.dreamdecoder.application.auth.service
 
+import sideprojects.dreamdecoder.application.web.auth.service.LoginService
 import spock.lang.Specification
-import sideprojects.dreamdecoder.application.auth.usecase.TokenGenerateUseCase
-import sideprojects.dreamdecoder.application.auth.validator.LoginValidator
-import sideprojects.dreamdecoder.domain.auth.model.UserModel
+import sideprojects.dreamdecoder.application.web.auth.usecase.TokenGenerateUseCase
+import sideprojects.dreamdecoder.application.web.auth.validator.LoginValidator
 import sideprojects.dreamdecoder.domain.auth.persistence.User
-import sideprojects.dreamdecoder.presentation.auth.dto.AuthResponse
-import sideprojects.dreamdecoder.presentation.auth.dto.LoginRequest
+import sideprojects.dreamdecoder.presentation.web.auth.dto.AuthResponse
+import sideprojects.dreamdecoder.presentation.web.auth.dto.LoginRequest
 
 class LoginServiceSpec extends Specification {
 
