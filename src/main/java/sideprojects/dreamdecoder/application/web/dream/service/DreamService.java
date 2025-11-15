@@ -28,16 +28,4 @@ public class DreamService {
     public DreamModel findDreamById(Long dreamId) {
         return repositoryImpl.findById(dreamId);
     }
-
-//    @Transactional
-//    public Dream updateDream(Long dreamId, UpdateDreamRequest request) {
-//        dreamValidator.validateExistingDream(dreamId);
-//        return repositoryImpl.update(request);
-//    }
-//
-//    @Transactional
-//    public void deleteDream(Long dreamId) {
-//        dreamValidator.validateExistingDream(dreamId);
-//        repositoryImpl.deleteById(dreamId);
-//    }
 }
