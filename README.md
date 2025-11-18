@@ -1,4 +1,7 @@
 # Dream Decoder
+# 프로젝트 임시 중단:11/18 
+> RAG 적용 vs enum 기반 응답 퀄리티 비교를 위해 /webversion 브랜치에 이전 완성 버전을 푸쉬, RAG 적용한 서비스는 nest기반으로 제작 중 [link](https://github.com/2eungwoo/dream-decoder-app)
+> 
 > <!> project is still proceeding 
 
 > is an LLM (OpenAI)-based service that provides meaningful interpretations by intelligently analyzing user-inputted dream content, focusing on complex symbol combinations. 
